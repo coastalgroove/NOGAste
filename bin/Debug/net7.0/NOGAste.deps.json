@@ -12,6 +12,7 @@
           "Microsoft.PowerShell.Commands.Utility": "7.3.7",
           "Microsoft.PowerShell.ConsoleHost": "7.3.7",
           "Microsoft.PowerShell.SDK": "7.3.7",
+          "System.Diagnostics.EventLog": "7.0.0",
           "System.Management.Automation": "7.3.7"
         },
         "runtime": {
