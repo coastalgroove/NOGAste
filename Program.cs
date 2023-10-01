@@ -14,112 +14,13 @@ using System.Reflection.Emit;
 using System.Threading.Tasks;
 using System.Reflection.Metadata;
 using NOGAste;
+using System.Security.Policy;
+using System.Collections.ObjectModel;
+using System.Management.Automation.Runspaces;
+using System.Management.Automation;
 
 namespace NOGAste
 {
-    //    public class EventLogEntry
-    //    {
-    //        //Properties
-    //        public string Message { get; set; }
-    //        public string EventID { get; set; }
-    //        public string Version { get; set; }
-    //        public string Qualifiers { get; set; }
-    //       public string Level { get; set; }
-    //      public string Task { get; set; }
-    //      public string Opcode { get; set; }
-    //      public string Keywords { get; set; }
-    //      public string RecordID { get; set; }
-    //      public string ProviderName { get; set; }
-
-
-    //       public string ProviderID { get; set; }
-    //       public string LogName { get; set; }
-    //       public string ProcessID { get; set; }
-    //       public string ThreadID { get; set; }
-    //       public string MachineName { get; set; }
-    //       public string UserID { get; set; }
-    //       public string TimeCreated { get; set; }
-    //       public string ActivityID { get; set; }
-    //       public string RelatedActivity { get; set; }
-    //       public string ContainerLog { get; set; }
-
-
-    //        public string MatchedQueryIDs { get; set; }
-    //        public string Bookmark { get; set; }
-    //        public string LevelDisplayName { get; set; }
-    //        public string OpcodeDisplayName { get; set; }
-    //        public string TaskDisplayName { get; set; }
-    //        public string KeywordsDisplayNames { get; set; }
-    //        public string Properties { get; set; }
-
-    //Constructor with parameters
-    //       public EventLogEntry(
-    //                              string message,
-    //                              string eventID,
-    //                              string version,
-    //                              string qualifiers,
-    //                              string level,
-    //                              string task,
-    //                              string opcode,
-    //                              string keywords,
-    //                              string recordID,
-    //                              string providerName,
-    //
-    //                               string providerID,
-    //                               string logName,
-    //                               string processID,
-    //                               string threadID,
-    //                               string machineName,
-    //                               string userID,
-    //                               string timeCreated,
-    //                               string activityID,
-    //                               string relatedActivity,
-    //                               string containerLog,
-
-    //                               string matchedQueryIDs,
-    //                               string bookmark,
-    //                               string levelDisplayName,
-    //                               string opcodeDisplayName,
-    //                               string taskDisplayName,
-    //                               string keywordsDisplayNames,
-    //                               string properties)
-
-    //        { //Body of method constructor, Initialize properites with the parameters
-
-    //                                 Message              = message;
-    //                                 EventID              = eventID;
-    //                                 Version              = version;
-    //                                 Qualifiers           = qualifiers;
-    //                                 Level                = level;
-    //                                 Task                 = task;
-    //                                 Opcode               = opcode;
-    //                                 Keywords             = keywords;
-    //                                 RecordID             = recordID;
-    //                                 ProviderName         = providerName ;
-    //                                 ProviderID           = providerID;
-    //                                 LogName              = logName;
-    //                                 ProcessID            = processID;
-    //                                 ThreadID             = threadID;
-    //                                 MachineName          = machineName;
-    //                                 UserID               = userID;
-    //                                 TimeCreated          = timeCreated;
-    //                                 ActivityID           = activityID;
-    //                                 RelatedActivity      = relatedActivity;
-    //                                 ContainerLog         = containerLog;
-    //                                 MatchedQueryIDs      = matchedQueryIDs;
-    //                                 Bookmark             = bookmark;
-    //                                 LevelDisplayName     = levelDisplayName;
-    //                                 OpcodeDisplayName    = opcodeDisplayName;
-    //                                 TaskDisplayName      = taskDisplayName;
-    //                                 KeywordsDisplayNames = keywordsDisplayNames;
-    //                                 Properties           = properties;
-    //       }//End method Body of EventLogentry Constructor
-
-
-
-    //}//Class EventLogEntry
-
-
 
 
 
@@ -129,7 +30,8 @@ namespace NOGAste
 
     class Program
     {
-        static void Main(string[] args)
+
+        public static void ReadCSVFile()
         {
             string filePath = "C:\\Users\\mcguertyj\\Documents\\Repos\\ZZZTest\\Raw_Events_Log_v0.4.9_100123.csv"; // Provide the correct path if the file is in a different location
 
@@ -259,8 +161,61 @@ namespace NOGAste
 
             }//using
 
-            // Now, you have a list of EventLogEntry objects created from the CSV file data in eventLogEntries.
-            // You can work with this list as needed.
+        }//ReadCSVFile
+
+
+
+        public static void ReadEVT()
+        {
+            //Open a runspace:
+            Runspace runSpace = RunspaceFactory.CreateRunspace();
+            runSpace.Open();
+
+            //Create a pipeline:
+            Pipeline pipeline = runSpace.CreatePipeline();
+
+            //Create a command:
+            Command cmd = new Command("Get-WinEvent");
+
+            //You can add parameters:
+            cmd.Parameters.Add("LogName", "security");
+            //cmd.Parameters.Add("StartTime", "08:00");
+            //cmd.Parameters.Add("EndTime", "09:00");
+
+            //Add it to the pipeline:
+            pipeline.Commands.Add(cmd);
+
+            Collection<PSObject> output = pipeline.Invoke();
+            //foreach (PSObject psObject in output)
+            foreach (PSObject psObject in output)
+            {
+                Console.WriteLine($"------------------------------------------ \n\n\n\n\n\n");
+                Console.ReadLine();
+                Console.WriteLine("Properties and Values:");
+                foreach (var property in psObject.Properties)
+                {
+                    Console.WriteLine($"{property.Name}: {property.Value} ");
+
+                }//foreach inner
+            }//foreach outter
+
+        }//Method ReadEVT
+
+
+
+
+
+
+
+
+
+
+
+        static void Main(string[] args)
+        {
+
+            //ReadCSVFile();
+            ReadEVT();
         }//Main
 
 
