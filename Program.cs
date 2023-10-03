@@ -18,6 +18,9 @@ using System.Security.Policy;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation;
+using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
+using System.Data;
 
 namespace NOGAste
 {
@@ -178,7 +181,7 @@ namespace NOGAste
             Command cmd = new Command("Get-WinEvent");
 
             //You can add parameters:
-            cmd.Parameters.Add("LogName", "security");
+            cmd.Parameters.Add("LogName", "application");
             //cmd.Parameters.Add("StartTime", "08:00");
             //cmd.Parameters.Add("EndTime", "09:00");
 
@@ -187,18 +190,23 @@ namespace NOGAste
 
             Collection<PSObject> output = pipeline.Invoke();
             //foreach (PSObject psObject in output)
-            foreach (PSObject psObject in output)
+            try
             {
-                Console.WriteLine($"------------------------------------------ \n\n\n\n\n\n");
-                Console.ReadLine();
-                Console.WriteLine("Properties and Values:");
-                foreach (var property in psObject.Properties)
+                foreach (PSObject psObject in output)
                 {
-                    Console.WriteLine($"{property.Name}: {property.Value} ");
+                    Console.WriteLine($"------------------------------------------ \n\n\n\n\n\n");
+                    Console.ReadLine();
+                    Console.WriteLine("Properties and Values:");
+                    foreach (var property in psObject.Properties)
+                    {
+                        Console.WriteLine($"{property.Name}: {property.Value} ");
 
-                }//foreach inner
-            }//foreach outter
-
+                    }//foreach inner
+                }//foreach outter
+            }catch (Exception ex) 
+            {
+                Console.Write(ex.ToString());
+            }
         }//Method ReadEVT
 
 
@@ -213,6 +221,43 @@ namespace NOGAste
 
         static void Main(string[] args)
         {
+
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            string connString = config.GetConnectionString("DefaultConnection");
+
+            IDbConnection conn = new MySqlConnection(connString);
+
+            //=================================================
+
+            Console.WriteLine("Press return to begin to retrieve Events");
+            Console.ReadLine();
+            var eventsRepo = new DapperEventsRepository(conn);
+            var eventsReturned = eventsRepo.GetEvents();
+
+            foreach (var blah in eventsReturned)
+            {
+                Console.WriteLine($"Event: {blah.EventID}, Name: {blah.UserName} ");
+                //Console.WriteLine("\n");
+            }
+
+            //=================================================
+            Console.WriteLine("Press return to begin to insert Events");
+            Console.ReadLine();
+
+            var eventInstance = new Events
+            {
+                EventID = 123, // Replace with actual values
+                MachineName = "MyMachine", // Replace with actual values
+                UserName = "User123" // Replace with actual values
+            };
+
+            //var eventsRepo = new DapperEventsRepository(conn);
+            //var eventsBlah = new DapperEventsRepository(conn);
+            //eventsRepo.InsertEvents(eventInstance);
 
             //ReadCSVFile();
             ReadEVT();
