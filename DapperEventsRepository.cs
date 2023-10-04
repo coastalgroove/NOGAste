@@ -17,31 +17,31 @@ namespace NOGAste
             _conn = conn;
         }
 
+        //Implementation of method "GetEvents" from
+        //Interface IEventsRepository
         public IEnumerable<Events> GetEvents()
         {
             return _conn.Query<Events>("SELECT * FROM Events");
         }
 
+        //Implementation of method "InsertEvents" from
+        //Interface IEventsRepository
         public void InsertEvents(Events events)
         {
+            //Parameterized Statement, Anonymouns Type
+            //(place holders) <==> Temporary Object to
+            //safely pass in parameters
             _conn.Execute("INSERT INTO Events" +
-                          " (EventID, MachineName, UserName)  " +
+                          " (EventID, TimeCreated, MachineName, UserName)  " +
                           " VALUES " +
-                          " (@EventID, @MachineName, @UserName)",
+                          " (@EventID, @TimeCreated, @MachineName, @UserID)",
                           new {
                               eventID      = events.EventID,
+                              timeCreated  = events.TimeCreated,
                               machineName  = events.MachineName,
-                              userName     = events.UserName,
+                              userID       = events.UserID,
                               });
-            //Parameterized Statement, Anonymouns Type (place holders) <==> Temporary Object to safely pass in parameters
-        }
-
- 
-
-    
-
-
-
+             }
 
 
     }//Class

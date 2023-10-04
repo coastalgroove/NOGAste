@@ -6,13 +6,19 @@ using System.Threading.Tasks;
 
 namespace NOGAste
 {
-    public class Events
+    public class Events  
     {
-        public int EventID {  get; set; }
+
+        //Class "Events" is used by IEventsRepository
+
+        //Properties
         //public string EventMsg {  get; set; }
-        //public DateTime TmeCreated { get; set; }
-        public string MachineName { get; set; }
-        public string UserName {  get; set; }
+        public int      EventID     {  get; set; }
+        //public DateTime TimeCreated { get; set; }
+        public string TimeCreated { get; set; }
+        public string   MachineName { get; set; }
+        public string   UserID      {  get; set; }
+
         //public string ThreatLvl { get; set; }
 
     }

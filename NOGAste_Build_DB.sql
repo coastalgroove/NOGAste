@@ -12,7 +12,7 @@ CREATE TABLE `events` (
   `AfterHours`   boolean NOT NULL DEFAULT 0,
   `LogonSuccess` boolean NOT NULL DEFAULT 0,
   `MachineName`  varchar(50) DEFAULT NULL,
-  `UserName`     varchar(50) DEFAULT NULL,
+  `UserID`       varchar(50) DEFAULT NULL,
   `ProgramRun`   varchar(50) DEFAULT NULL,
   `FileAccess`   varchar(50) DEFAULT NULL,  
   `LogLvl`       varchar(50) DEFAULT NULL,

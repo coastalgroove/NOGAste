@@ -33,16 +33,20 @@ namespace NOGAste
 
     class Program
     {
-
+        //Method
         public static void ReadCSVFile()
         {
-            string filePath = "C:\\Users\\mcguertyj\\Documents\\Repos\\ZZZTest\\Raw_Events_Log_v0.4.9_100123.csv"; // Provide the correct path if the file is in a different location
+            string filePath = "C:\\Users\\mcguertyj\\Documents\\Repos\\ZZZTest\\Raw_Events_Log_v0.4.9_100123.csv";
 
 
-            //List<EventLogEntry> eventLogEntries = new List<EventLogEntry>();
-            List<EventLogCSVImport> eventLogEntries = new List<EventLogCSVImport>();
-
-
+            //Defines a boundary for the object outside of which
+            //the object is automatically destroyed.  The using statement
+            //is exited when exiting the using block
+            //The "using" statement allows you to specify multiple resources in a
+            //single statement. The object could also be created outside the "using"
+            //statement. The objects specified within the using block must implement
+            //the IDisposable interface. The framework invokes the Dispose method of
+            //objects specified within the "using" statement when the block is exited.
             using (TextFieldParser parser = new TextFieldParser(filePath))
             {
                 parser.TextFieldType = FieldType.Delimited;
@@ -53,44 +57,68 @@ namespace NOGAste
 
                 string acctName = "";
 
+
+
+
+                var config = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json")
+                    .Build();
+
+                string connString = config.GetConnectionString("DefaultConnection");
+
+                IDbConnection conn = new MySqlConnection(connString);
+
+                //=================================================
+
+
+
+
                 while (!parser.EndOfData)
                 {
+                    //define a string array that receives extracted each rows
+                    //with 27 columns (fields) into an array
                     string[] fields = parser.ReadFields();
 
-                    if (fields.Length >= 5)
-                    {
-                        string Message = fields[0];
-                        string EventID = fields[1];
-                        string Version = fields[2];
-                        string Qualifiers = fields[3];
-                        string Level = fields[4];
-                        string Task = fields[5];
-                        string Opcode = fields[6];
-                        string Keywords = fields[7];
-                        string Recordid = fields[8];
-                        string ProviderName = fields[9];
 
-                        string ProviderID = fields[10];
-                        string LogName = fields[11];
-                        string ProcessID = fields[12];
-                        string ThreadID = fields[13];
-                        string MachineName = fields[14];
-                        string UserID = fields[15];
-                        string TimeCreated = fields[16];
-                        string ActivityID = fields[17];
-                        string RelatedActivity = fields[18];
-                        string ContainerLog = fields[19];
+                    if (fields.Length >= 27)  //this "if" doesn't really need to be here
+                    {   //These are variables that correlate to columns(named headers) in the .CSV file
+                        //indexed 
+                        string Message              = fields[0];
+                        string EventID              = fields[1];
+                        string Version              = fields[2];
+                        string Qualifiers           = fields[3];
+                        string Level                = fields[4];
+                        string Task                 = fields[5];
+                        string Opcode               = fields[6];
+                        string Keywords             = fields[7];
+                        string Recordid             = fields[8];
+                        string ProviderName         = fields[9];
+                         
+                        string ProviderID           = fields[10];
+                        string LogName              = fields[11];
+                        string ProcessID            = fields[12];
+                        string ThreadID             = fields[13];
+                        string MachineName          = fields[14];
+                        string UserID               = fields[15];
+                        string TimeCreated          = fields[16];
+                        string ActivityID           = fields[17];
+                        string RelatedActivity      = fields[18];
+                        string ContainerLog         = fields[19];
 
-                        string MatchedQueryIDs = fields[20];
-                        string Bookmark = fields[21];
-                        string LevelDisplayName = fields[22];
-                        string OpcodeDisplayName = fields[23];
-                        string TaskDisplayName = fields[24];
+                        string MatchedQueryIDs      = fields[20];
+                        string Bookmark             = fields[21];
+                        string LevelDisplayName     = fields[22];
+                        string OpcodeDisplayName    = fields[23];
+                        string TaskDisplayName      = fields[24];
                         string KeywordsDisplayNames = fields[25];
-                        string Properties = fields[26];
+                        string Properties           = fields[26];
 
-                        //EventLogEntry logEntry = new EventLogEntry(
 
+                        //I tried this but could not get it to work
+                        //EventLogEntry logEntry = new EventLogEntry()
+
+                        //So I created my own class EventLogCSVImport
                         EventLogCSVImport logEntry = new EventLogCSVImport(
                                      Message,
                                      EventID,
@@ -123,48 +151,68 @@ namespace NOGAste
                                      Properties
                                      );
 
+
+                        //List<EventLogEntry> eventLogEntries = new List<EventLogEntry>();
+                        List<EventLogCSVImport> eventLogEntries = new List<EventLogCSVImport>();
+
+
+
+                        //========================================
+                        //NOTE: At this point "eventLogEntries" object is has all the LogEvent Properties
+                        //for ONE event.
+                        //I need to ADD additional field EXTRACTED using 
+                        //"StringExtractionTools which creates, returns a DICTIONARY 
+                        //with extra fields I need to add to "eventLogEntries" object
+
+                        //Remember we are in a "while" loop, processing one
+                        //"row" i.e. "Event" at a time.
+                        //we can OPTIONALLY decide to loop through each extract field from
+                        //the event MSG here.  
+
+                        //Uncomment these two lines to see the raw message
+                        //Console.WriteLine($"Log Message: {logEntry.Message}");
+                        //Console.ReadLine();
+
+
+                        //This converts a monoloithic msg text to distinct fields and values (best try)
+                        Dictionary<string, string> msgDict = new Dictionary<string, string>();
+                        msgDict = StringExtractionTools.convertMsgToFields(logEntry.Message);
+
+                        //NOW, access the extra fields from "msgDict" and add to "eventLogEntries"
+
+
+
                         eventLogEntries.Add(logEntry);
-                        Console.WriteLine($"----------------------------------------");
-                        Console.WriteLine($"EventID:    {logEntry.EventID}");
-                        Console.WriteLine($"Event Time: {logEntry.TimeCreated}");
-                        Console.WriteLine($"MachineName:{logEntry.MachineName}");
+                        //Console.WriteLine($"----------------------------------------");
+                        //Console.WriteLine($"EventID:    {logEntry.EventID}");
+                        //Console.WriteLine($"MachineName:{logEntry.MachineName}");
+                        //Console.WriteLine($"Event Time: {logEntry.TimeCreated}");
 
-                        //This converts monoloithic msg text to distinct fields and values (best try)
-                        List<string> msgFieldList = new List<string>();
-                        msgFieldList = StringExtractionTools.convertMsgToFields(logEntry.Message);
-                        Console.WriteLine("------Completed List--------");
-                        foreach (string field in msgFieldList)
+                        if (msgDict.ContainsKey("UserID"))
                         {
-                            Console.WriteLine(field);
+                            logEntry.UserID = msgDict["UserID"];
                         }
-                        //Console.ReadLine();
+                        if (msgDict.ContainsKey("MachineName"))
+                        {
+                            logEntry.MachineName = msgDict["MachineName"];
+                        }
 
-                        //Console.WriteLine($"UserID:     {logEntry.UserID}");
-
-                        //-----Account Name------------
-                        //acctName = StringExtractionTools.ExtractFieldDelimBoundary(logEntry.Message, "Account Name", "Account Domain");
-                        //
-                        //acctName = StringExtractionTools.ExtractFromListReturnSubStr(msgFieldList, "Account Name");
-
-                        //Console.WriteLine($"UserName:   {acctName}");
-
-                        //-----Process Name------------
-                        //-----Process Cmd Line------------
-                        //-----Object Name------------
-                        //index = logEntry.Message.IndexOf("Account Name");
-                        //index2 = logEntry.Message.IndexOf("Account Domain");
+                        var eventsRepo = new DapperEventsRepository(conn);
+                        var eventInstance = new Events(); //(EventID, TimeCreated, MachineName, UserID);
+                        eventsRepo.InsertEvents(eventInstance);
 
 
-                        //Console.WriteLine($"EventMsg:   {logEntry.Message}");
-
-                        //Console.ReadLine();
 
                     }//if
+
                 }//while
 
             }//using
 
-        }//ReadCSVFile
+        }//ReadCSVFile Method
+
+
+
 
 
 
@@ -190,23 +238,34 @@ namespace NOGAste
 
             Collection<PSObject> output = pipeline.Invoke();
             //foreach (PSObject psObject in output)
-            try
-            {
-                foreach (PSObject psObject in output)
+
+
+
+            foreach (PSObject psObject in output)
                 {
                     Console.WriteLine($"------------------------------------------ \n\n\n\n\n\n");
                     Console.ReadLine();
                     Console.WriteLine("Properties and Values:");
                     foreach (var property in psObject.Properties)
                     {
-                        Console.WriteLine($"{property.Name}: {property.Value} ");
-
-                    }//foreach inner
+                    
+                    try
+                    {
+                            //zzz
+                            if (property.Name == "Id" || property.Name == "MachineName" || property.Name == "TimeCreated")
+                             {
+                               Console.WriteLine($"{property.Name}: {property.Value} ");
+                             }
+                    }
+                    catch (Exception ex)
+                    {
+                        //Console.Write(ex.ToString());
+                        Console.Write("Unable to proces this event.......");
+                        Console.ReadLine();
+                    }
+                }//foreach inner
                 }//foreach outter
-            }catch (Exception ex) 
-            {
-                Console.Write(ex.ToString());
-            }
+
         }//Method ReadEVT
 
 
@@ -219,7 +278,7 @@ namespace NOGAste
 
 
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
 
             var config = new ConfigurationBuilder()
@@ -235,32 +294,34 @@ namespace NOGAste
 
             Console.WriteLine("Press return to begin to retrieve Events");
             Console.ReadLine();
-            var eventsRepo = new DapperEventsRepository(conn);
-            var eventsReturned = eventsRepo.GetEvents();
+            //var eventsRepo = new DapperEventsRepository(conn);
+            //var eventsReturned = eventsRepo.GetEvents();
 
-            foreach (var blah in eventsReturned)
-            {
-                Console.WriteLine($"Event: {blah.EventID}, Name: {blah.UserName} ");
-                //Console.WriteLine("\n");
-            }
+            //foreach (var blah in eventsReturned)
+            //{
+            //    Console.WriteLine($"Event: {blah.EventID}, MachineName: {blah.MachineName}, UserName: {blah.UserName},  ");
+            //    Console.WriteLine("\n");
+            //    Console.ReadLine();
+            // }
 
+          
             //=================================================
             Console.WriteLine("Press return to begin to insert Events");
             Console.ReadLine();
 
-            var eventInstance = new Events
-            {
-                EventID = 123, // Replace with actual values
-                MachineName = "MyMachine", // Replace with actual values
-                UserName = "User123" // Replace with actual values
-            };
+            //var eventInstance = new Events
+            //{
+            //    EventID = 999, // Replace with actual values
+            //    TimeCreated = "13:00:00 08:21",
+            //    MachineName = "TimeMachine", // Replace with actual values
+            //    UserID      = "JamesBond" // Replace with actual values
+            //};
 
             //var eventsRepo = new DapperEventsRepository(conn);
-            //var eventsBlah = new DapperEventsRepository(conn);
             //eventsRepo.InsertEvents(eventInstance);
 
-            //ReadCSVFile();
-            ReadEVT();
+            ReadCSVFile();
+            //ReadEVT();
         }//Main
 
 
