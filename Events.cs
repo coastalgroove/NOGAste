@@ -13,7 +13,7 @@ namespace NOGAste
 
         //Properties
         //public string EventMsg {  get; set; }
-        public int      EventID     {  get; set; }
+        public string   EventID     {  get; set; }
         //public DateTime TimeCreated { get; set; }
         public string TimeCreated { get; set; }
         public string   MachineName { get; set; }

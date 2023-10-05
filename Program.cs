@@ -21,6 +21,7 @@ using System.Management.Automation;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using System.Data;
+using Markdig.Extensions.Figures;
 
 namespace NOGAste
 {
@@ -72,8 +73,8 @@ namespace NOGAste
                 //=================================================
 
 
-
-
+                int j = 0;
+                int k = 0;
                 while (!parser.EndOfData)
                 {
                     //define a string array that receives extracted each rows
@@ -82,37 +83,37 @@ namespace NOGAste
 
 
                     if (fields.Length >= 27)  //this "if" doesn't really need to be here
-                    {   //These are variables that correlate to columns(named headers) in the .CSV file
-                        //indexed 
-                        string Message              = fields[0];
-                        string EventID              = fields[1];
-                        string Version              = fields[2];
-                        string Qualifiers           = fields[3];
-                        string Level                = fields[4];
-                        string Task                 = fields[5];
-                        string Opcode               = fields[6];
-                        string Keywords             = fields[7];
-                        string Recordid             = fields[8];
-                        string ProviderName         = fields[9];
-                         
-                        string ProviderID           = fields[10];
-                        string LogName              = fields[11];
-                        string ProcessID            = fields[12];
-                        string ThreadID             = fields[13];
-                        string MachineName          = fields[14];
-                        string UserID               = fields[15];
-                        string TimeCreated          = fields[16];
-                        string ActivityID           = fields[17];
-                        string RelatedActivity      = fields[18];
-                        string ContainerLog         = fields[19];
+                    {   //These are variables that correlate to columns(named
+                        //headers) in the .CSV file 
+                        string Message = fields[0];
+                        string EventID = fields[1];
+                        string Version = fields[2];
+                        string Qualifiers = fields[3];
+                        string Level = fields[4];
+                        string Task = fields[5];
+                        string Opcode = fields[6];
+                        string Keywords = fields[7];
+                        string Recordid = fields[8];
+                        string ProviderName = fields[9];
 
-                        string MatchedQueryIDs      = fields[20];
-                        string Bookmark             = fields[21];
-                        string LevelDisplayName     = fields[22];
-                        string OpcodeDisplayName    = fields[23];
-                        string TaskDisplayName      = fields[24];
+                        string ProviderID = fields[10];
+                        string LogName = fields[11];
+                        string ProcessID = fields[12];
+                        string ThreadID = fields[13];
+                        string MachineName = fields[14];
+                        string UserID = fields[15];
+                        string TimeCreated = fields[16];
+                        string ActivityID = fields[17];
+                        string RelatedActivity = fields[18];
+                        string ContainerLog = fields[19];
+
+                        string MatchedQueryIDs = fields[20];
+                        string Bookmark = fields[21];
+                        string LevelDisplayName = fields[22];
+                        string OpcodeDisplayName = fields[23];
+                        string TaskDisplayName = fields[24];
                         string KeywordsDisplayNames = fields[25];
-                        string Properties           = fields[26];
+                        string Properties = fields[26];
 
 
                         //I tried this but could not get it to work
@@ -178,33 +179,62 @@ namespace NOGAste
                         Dictionary<string, string> msgDict = new Dictionary<string, string>();
                         msgDict = StringExtractionTools.convertMsgToFields(logEntry.Message);
 
-                        //NOW, access the extra fields from "msgDict" and add to "eventLogEntries"
+                        //NOW, access the extra fields from "msgDict" and UPDATE "logEntry"
+                        //before its added to "eventLogEntries"
+
+                        for (int i = 0; i < msgDict.Count; i++)
+                        {
+                            Console.WriteLine($"Key: {msgDict.ElementAt(i).Key},  Value: {msgDict.ElementAt(i).Value} ");
+                        }
+                        //Console.WriteLine($"Finished Processing Message List - a Look at msgDict returned ");
+                        //Console.ReadLine();
 
 
-
-                        eventLogEntries.Add(logEntry);
-                        //Console.WriteLine($"----------------------------------------");
-                        //Console.WriteLine($"EventID:    {logEntry.EventID}");
-                        //Console.WriteLine($"MachineName:{logEntry.MachineName}");
-                        //Console.WriteLine($"Event Time: {logEntry.TimeCreated}");
 
                         if (msgDict.ContainsKey("UserID"))
                         {
+                            Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
                             logEntry.UserID = msgDict["UserID"];
+                            Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
+                            Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("MachineName"))
                         {
+                            Console.WriteLine($"BEFORE: MachineName:{msgDict["MachineName"]} ");
                             logEntry.MachineName = msgDict["MachineName"];
+                            Console.WriteLine($"AFTER:  MachineName:{msgDict["MachineName"]} ");
+                            Console.ReadLine();
                         }
 
+                        //if (msgDict.ContainsKey("Failure_Reason"))
+                        //{
+                        //    Console.WriteLine($"BEFORE: Failure_Reason:{msgDict["Failure_Reason"]} ");
+                        //    logEntry.UserID = msgDict["Failure_Reason"];
+                        //    Console.WriteLine($"AFTER:  Failure_Reason:{msgDict["Failure_Reason"]} ");
+                        //    Console.ReadLine();
+                        //}
+
+                        //if (msgDict.ContainsKey("UserID") && msgDict.ContainsKey("MachineName") || msgDict.ContainsKey("Failure_Reason") );
+                        //{
+                        var eventInstance = new Events  //(EventID, TimeCreated, MachineName, UserID);
+                        {
+                            EventID = "4624",
+                            TimeCreated = "2023-10-04 17:34:21",
+                            UserID = "JamesBond",
+                            MachineName = "AstinMartin"
+                        };
+                        //Adding the logEntry into the array "eventLogEntries"
+                        Console.WriteLine($"Writing Event: {j} to Array, Total Events: {k}");
+                        eventLogEntries.Add(logEntry);
+
                         var eventsRepo = new DapperEventsRepository(conn);
-                        var eventInstance = new Events(); //(EventID, TimeCreated, MachineName, UserID);
+                        //Insert into DB
                         eventsRepo.InsertEvents(eventInstance);
-
-
-
+                        Console.ReadLine() ;
+                            j++;
+                        //}
                     }//if
-
+                    k++;
                 }//while
 
             }//using
@@ -292,8 +322,8 @@ namespace NOGAste
 
             //=================================================
 
-            Console.WriteLine("Press return to begin to retrieve Events");
-            Console.ReadLine();
+            //Console.WriteLine("Press return to begin to retrieve Events");
+            //Console.ReadLine();
             //var eventsRepo = new DapperEventsRepository(conn);
             //var eventsReturned = eventsRepo.GetEvents();
 
@@ -306,15 +336,15 @@ namespace NOGAste
 
           
             //=================================================
-            Console.WriteLine("Press return to begin to insert Events");
-            Console.ReadLine();
+            //Console.WriteLine("Press return to begin to insert Events");
+            //Console.ReadLine();
 
             //var eventInstance = new Events
             //{
-            //    EventID = 999, // Replace with actual values
+            //    EventID = 999, 
             //    TimeCreated = "13:00:00 08:21",
-            //    MachineName = "TimeMachine", // Replace with actual values
-            //    UserID      = "JamesBond" // Replace with actual values
+            //    MachineName = "TimeMachine",
+            //    UserID      = "JamesBond"
             //};
 
             //var eventsRepo = new DapperEventsRepository(conn);

@@ -37,7 +37,7 @@ namespace NOGAste
         public string ThreadID             { get; set; }
         public string MachineName          { get; set; }
         public string UserID               { get; set; }
-        public string TimeCreated          { get; set; }
+        public string TimeCreated        { get; set; }
         public string ActivityID           { get; set; }
         public string RelatedActivity      { get; set; }
         public string ContainerLog         { get; set; }

@@ -155,13 +155,13 @@ namespace NOGAste
                     msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]);
                     string secIDUpd = words[i + 2] + " " + words[i + 3];
 
-                    if (msgDict.TryGetValue(("Security ID"), out string curVal))
+                    if (msgDict.TryGetValue(("Security_ID"), out string curVal))
                     {
-                        msgDict["Security ID"] = curVal + secIDUpd;
+                        msgDict["Security_ID"] = curVal + secIDUpd;
                     }
                     else
                     {
-                        msgDict.Add("Security ID", words[i + 2] + " " + words[i + 3]);
+                        msgDict.Add("Security_ID", words[i + 2] + " " + words[i + 3]);
                     }
                     //Console.WriteLine($"Added  Security ID: {words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]}");
                     //Console.ReadLine();
@@ -177,8 +177,8 @@ namespace NOGAste
                 //Account Name/3
                 else if (words[i] == "Account" && words[i + 1] == "Name:"  &&  words[i + 2] != "New")
                 {
-                    Console.WriteLine($"Matched Account Name:");
-                    Console.ReadLine();
+                    //Console.WriteLine($"Matched Account Name:");
+                    //Console.ReadLine();
                     msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2]);
 
                     string acctNamUpd = words[i + 2];
@@ -204,9 +204,9 @@ namespace NOGAste
                     }catch
                     {
                         Console.WriteLine($"Field: {i} Failed to read Account Name.....");
-                        Console.ReadLine();
+                        //Console.ReadLine();
                     }
-                    Console.WriteLine($"Added UserID: {words[i] + " " + words[i + 1] + " " + words[i + 2]}");
+                    //Console.WriteLine($"Added UserID: {words[i] + " " + words[i + 1] + " " + words[i + 2]}");
                     i += 2;
                 }//Account Name:/3
 
@@ -222,12 +222,7 @@ namespace NOGAste
                     //Console.WriteLine($"Matched Account Domain:");
                     //Console.ReadLine();
 
-
-
-
                     //msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2]);
-
-
 
                     string acctDomUpd = "";
                     bool incExtra = true;
@@ -245,13 +240,13 @@ namespace NOGAste
 
 
 
-                    if (msgDict.TryGetValue(("Account Domain"), out string curVal))
+                    if (msgDict.TryGetValue(("Account_Domain"), out string curVal))
                     {
-                        msgDict["Account Domain"] = curVal + acctDomUpd;
+                        msgDict["Account_Domain"] = curVal + acctDomUpd;
                     }
                     else
                     {
-                        msgDict.Add("Account Domain", words[i + 2]);
+                        msgDict.Add("Account_Domain", words[i + 2]);
                     }
 
                     if (incExtra)
@@ -302,29 +297,29 @@ namespace NOGAste
 
                         if (words[i + 2].Contains("0x"))
                         {
-                            Console.WriteLine($"Matched Logon ID:");
-                            Console.ReadLine();
+                            //Console.WriteLine($"Matched Logon ID:");
+                            //Console.ReadLine();
                             msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2]);
-                            msgDict.Add("Logon ID", words[i + 2]);
-                            Console.WriteLine($"Added Logon ID: {words[i] + " " + words[i + 1] + " " + words[i + 2]}");
-                            Console.ReadLine();
+                            msgDict.Add("Logon_ID", words[i + 2]);
+                            //Console.WriteLine($"Added Logon ID: {words[i] + " " + words[i + 1] + " " + words[i + 2]}");
+                            //Console.ReadLine();
                             i += 2;
                         }//if
 
                         else
                         {
-                            Console.WriteLine($"Logon ID is NULL");
+                            //Console.WriteLine($"Logon ID is NULL");
                             msgFieldList.Add(words[i] + " " + words[i + 1] + " NULL");
-                            msgDict.Add("Logon ID", " NULL");
-                            Console.WriteLine($"Added Logon ID: {words[i]},  {words[i + 1]}  NULL");
-                            Console.ReadLine();
+                            msgDict.Add("Logon_ID", " NULL");
+                            //Console.WriteLine($"Added Logon ID: {words[i]},  {words[i + 1]}  NULL");
+                            //Console.ReadLine();
                             i += 1;
                         }//else
 
                     } catch (Exception e)
                         {
-                        Console.WriteLine($"Field: {i}, Failed Read Logon ID");
-                        Console.ReadLine();
+                        //Console.WriteLine($"Field: {i}, Failed Read Logon ID");
+                        //Console.ReadLine();
                         }
                 }//Logon ID/6
 
@@ -339,7 +334,7 @@ namespace NOGAste
                     //Console.WriteLine($"Matched Logon Type:");
                     //Console.ReadLine();
                     msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2]);
-                    msgDict.Add("Logon Type: ", words[i + 2]);
+                    msgDict.Add("Logon_Type: ", words[i + 2]);
                     //Console.WriteLine($"Added Logon Type: {words[i] + " " + words[i + 1] + " " + words[i + 2]}");
                     //Console.ReadLine();
                     i += 2;
@@ -375,13 +370,13 @@ namespace NOGAste
                     //}
 
 
-                    if (msgDict.TryGetValue(("Logon Failure"), out string curVal))
+                    if (msgDict.TryGetValue(("Logon_Failure"), out string curVal))
                     {
-                        msgDict["Logon Failure"] = curVal + acctFailUpd;
+                        msgDict["Logon_Failure"] = curVal + acctFailUpd;
                     }
                     else
                     {
-                        msgDict.Add("Logon Failure", acctFailUpd);
+                        msgDict.Add("Logon_Failure", acctFailUpd);
                     }
                     //if (incExtra)
                     //{
@@ -410,7 +405,7 @@ namespace NOGAste
                     //Console.WriteLine($"Matched New Process Name:");
                     //Console.ReadLine();
                     msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]);
-                    msgDict.Add("New Process Name", words[i + 3]);
+                    msgDict.Add("New_Process_Name", words[i + 3]);
                     //Console.WriteLine($"Added Process Name: {words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]}");
                     i += 3;
                 }//New Process Name:/9
@@ -429,7 +424,7 @@ namespace NOGAste
                         //Console.WriteLine($"Matched Process Command Line:");
                         //Console.ReadLine();
                         msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]);
-                        msgDict.Add("Process Command Line", words[i + 3]);
+                        msgDict.Add("Process_Cmd_Line", words[i + 3]);
                         //Console.WriteLine($"Added Process Command Line: {words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]}");
                         i += 3;
                     }
@@ -468,16 +463,16 @@ namespace NOGAste
                     tmpStr4 += words[i] + " ";
                     string failInfoUpd = tmpStr4;
 
-                    if (msgDict.TryGetValue(("Failure Information"), out string curVal))
+                    if (msgDict.TryGetValue(("Failure_Information"), out string curVal))
                     {
-                        msgDict["Failure Information"] = curVal + failInfoUpd;
+                        msgDict["Failure_Information"] = curVal + failInfoUpd;
                     }
                     else
                     {
-                        msgDict.Add("Failure Information", failInfoUpd);
+                        msgDict.Add("Failure_Information", failInfoUpd);
                     }
 
-                    msgDict.Add("Failure Information: ", failInfoUpd);
+                    msgDict.Add("Failure_Information: ", failInfoUpd);
                     //Console.WriteLine($"Failure Information: {failInfoUpd}");
                     //Console.ReadLine();
                     i += 2;
@@ -508,16 +503,16 @@ namespace NOGAste
                     string failReasonUpd = tmpStr5;
 
 
-                    if (msgDict.TryGetValue(("Failure Reason"), out string curVal))
+                    if (msgDict.TryGetValue(("Failure_Reason"), out string curVal))
                     {
-                        msgDict["Failure Reason"] = curVal + failReasonUpd;
+                        msgDict["Failure_Reason"] = curVal + failReasonUpd;
                     }
                     else
                     {
-                        msgDict.Add("Failure Reason", failReasonUpd);
+                        msgDict.Add("Failure_Reason", failReasonUpd);
                     }
 
-                    msgDict.Add("Failure Reason: ", failReasonUpd);
+                    msgDict.Add("Failure_Reason: ", failReasonUpd);
                     //Console.WriteLine($"Failure Reason: {failReasonUpd}");
                     //Console.ReadLine();
                     i += 2;
@@ -554,7 +549,7 @@ namespace NOGAste
                     //Console.WriteLine($"Matched Sub Status");
                     //Console.ReadLine();
                     msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2]);
-                    msgDict.Add("Sub Status", words[i + 2]);
+                    msgDict.Add("Sub_Status", words[i + 2]);
                     //Console.WriteLine($"Added Sub Status: {words[i] + " " + words[i + 1] + " " + words[i + 2]}");
                     i += 2;
                 }//Sub Status:/14
@@ -569,7 +564,7 @@ namespace NOGAste
                     //Console.WriteLine($"Matched Process Information");
                     //Console.ReadLine();
                     msgFieldList.Add(words[i] + " " + words[i + 1]);
-                    msgDict.Add("Process Information", words[i + 1]);
+                    msgDict.Add("Process_Information", words[i + 1]);
                     //Console.WriteLine($"Added Process Information: {words[i].Substring(0, words[i].Length - 1) + " " + words[i + 1]}");
                     i++;
                 }//Sub Status:15
@@ -644,7 +639,15 @@ namespace NOGAste
 
                 //Console.WriteLine($"----String Extraction From MSG Fields END -------");
             }//for
-            //Console.WriteLine($"Finished Processing Message List");
+
+
+
+            //for (int i = 0; i < msgDict.Count; i++)
+            //{
+            //    Console.WriteLine($"Key: {msgDict.ElementAt(i).Key},  Value: {msgDict.ElementAt(i).Value} ");
+            //}
+            //Console.WriteLine($"Finished Processing Message List - a Look at msgDict before we return ");
+            //Console.ReadLine();
             //Console.ReadLine();
             //return msgFieldList;
             return msgDict;

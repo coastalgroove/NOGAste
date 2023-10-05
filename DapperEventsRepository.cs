@@ -32,7 +32,7 @@ namespace NOGAste
             //(place holders) <==> Temporary Object to
             //safely pass in parameters
             _conn.Execute("INSERT INTO Events" +
-                          " (EventID, TimeCreated, MachineName, UserName)  " +
+                          " (EventID, TimeCreated, MachineName, UserID)  " +
                           " VALUES " +
                           " (@EventID, @TimeCreated, @MachineName, @UserID)",
                           new {
