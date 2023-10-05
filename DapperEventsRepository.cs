@@ -40,6 +40,7 @@ namespace NOGAste
                               timeCreated  = events.TimeCreated,
                               machineName  = events.MachineName,
                               userID       = events.UserID,
+                              //failReason   = events.FailReason,
                               });
              }
 

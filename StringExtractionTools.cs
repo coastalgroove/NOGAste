@@ -503,16 +503,16 @@ namespace NOGAste
                     string failReasonUpd = tmpStr5;
 
 
-                    if (msgDict.TryGetValue(("Failure_Reason"), out string curVal))
+                    if (msgDict.TryGetValue(("FailReason"), out string curVal))
                     {
-                        msgDict["Failure_Reason"] = curVal + failReasonUpd;
+                        msgDict["FailReason"] = curVal + failReasonUpd;
                     }
                     else
                     {
-                        msgDict.Add("Failure_Reason", failReasonUpd);
+                        msgDict.Add("FailReason", failReasonUpd);
                     }
 
-                    msgDict.Add("Failure_Reason: ", failReasonUpd);
+                    msgDict.Add("FailReason: ", failReasonUpd);
                     //Console.WriteLine($"Failure Reason: {failReasonUpd}");
                     //Console.ReadLine();
                     i += 2;
