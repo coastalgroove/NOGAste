@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Markdig.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
@@ -22,12 +23,19 @@ namespace NOGAste
             string[] words = message.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             string part1 = "";
             string part2 = "";
-
-
+            string curVal = "";
+            int numRecords = 0;
+            int numAcctNameFail    = 0;
+            int numAcctNameSuccess = 0;
+            Console.WriteLine("------------------------------------------------");
+            Console.WriteLine($"Parsing Message: {message}");
+            Console.WriteLine("------------------------------------------------");
             for (int i = 0; i < words.Length; i++)
             {
 
-
+                Console.WriteLine("------------------------------------------------");
+                Console.WriteLine($"Current Word: {words[i]}");
+                Console.WriteLine("------------------------------------------------");
 
                 //Subject/1 appears to never have anything in it
                 //else if (words[i] == "Subject:")
@@ -56,14 +64,18 @@ namespace NOGAste
                     while (i < words.Length - i && !words[i].Contains('.'))
                     {
                         tmpStr2 += words[i] + " ";
-                        if (i < words.Length - 1) { i++; }
+                         i++;
                         //Console.WriteLine($"Searching for .  {tmpStr2} ");
                     }
                     //Get the last word
-                    if (i < words.Length - 1) { tmpStr2 += " " + words[i]; }
+                    if (i + 1 <= words.Length - 1)
+                    {
+                        tmpStr2 += " " + words[i + 1];
+                        i+=2;
+                    }
 
 
-                    if (msgDict.TryGetValue(("EventMsg"), out string curVal))
+                     if (msgDict.TryGetValue(("EventMsg"), out curVal))
                     {
                         msgDict["EventMsg"] = curVal + tmpStr2;
                     }
@@ -72,7 +84,13 @@ namespace NOGAste
                         msgDict.Add("EventMsg", tmpStr2);
                     }
 
-                    msgFieldList.Add("EventMsg: " + " " + tmpStr1 + " " + tmpStr2);
+                     //Get the last word
+                     if (i + 1 <= words.Length - 1)
+                         {
+                            tmpStr2 += " " + words[i + 1];
+                            i+=2;
+                          }
+
                     //Console.WriteLine($"Added EventMsg: {"EventMsg:" + " " + tmpStr1 + " " + tmpStr2}");
                     //i++;
                 }//EventMsg "The"
@@ -98,7 +116,7 @@ namespace NOGAste
                     //get last word
                     tmpStr2 += " " + words[i];
 
-                    if (msgDict.TryGetValue(("EventMsg"), out string curVal))
+                    if (msgDict.TryGetValue(("EventMsg"), out curVal))
                     {
                         msgDict["EventMsg"] = curVal + tmpStr2;
                     }
@@ -107,10 +125,11 @@ namespace NOGAste
                         msgDict.Add("EventMsg", tmpStr2);
                     }
 
-                    msgFieldList.Add("EventMsg: " + " " + tmpStr1 + " " + tmpStr2);
                    //Console.WriteLine($"Added EventMsg: {"EventMsg:" + " " + tmpStr1 + " " + tmpStr2}"); ;
                     //i++;
                 }//EventMsg:
+
+
 
 
 
@@ -131,7 +150,7 @@ namespace NOGAste
                     //Get the last word
                     tmpStr2 += " " + words[i];
 
-                    if (msgDict.TryGetValue(("EventMsg"), out string curVal))
+                    if (msgDict.TryGetValue(("EventMsg"), out curVal))
                     {
                         msgDict["EventMsg"] = curVal + tmpStr2;
                     }
@@ -140,10 +159,12 @@ namespace NOGAste
                         msgDict.Add("EventMsg", tmpStr2);
                     }
 
-                    msgFieldList.Add("EventMsg: " + " " + tmpStr1 + " " + tmpStr2);
+
                     //Console.WriteLine($"Added EventMsg: {"EventMsg:" + " " + tmpStr1 + " " + tmpStr2}");
                     //i++;
                 }//EventMsg "Succesfully"
+
+
 
 
 
@@ -155,7 +176,7 @@ namespace NOGAste
                     msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]);
                     string secIDUpd = words[i + 2] + " " + words[i + 3];
 
-                    if (msgDict.TryGetValue(("Security_ID"), out string curVal))
+                    if (msgDict.TryGetValue(("Security_ID"), out curVal))
                     {
                         msgDict["Security_ID"] = curVal + secIDUpd;
                     }
@@ -172,7 +193,9 @@ namespace NOGAste
 
 
 
-
+                
+            
+                
 
                 //Account Name/3
                 else if (words[i] == "Account" && words[i + 1] == "Name:"  &&  words[i + 2] != "New")
@@ -186,28 +209,55 @@ namespace NOGAste
 
                     try
                     {
-                        if (msgDict.TryGetValue(("UserID"), out string curVal))
+                        curVal = "";
+                        if (msgDict.TryGetValue(("UserID"), out  curVal))
                         {
                             if (!curVal.Contains("NULL") || !curVal.Contains("SID"))
                             {
                                 msgDict["UserID"] = curVal + "," + acctNamUpd;
+                                Console.WriteLine($"Field Name Valid:{words[i + 2]}.....");
+                                Console.WriteLine($"Words:{message}");
+                                //Console.ReadLine();
                             }
+                            else
+                            {
+                                Console.WriteLine($"Field Name Rejected:{words[i + 2]}.....");
+                                Console.WriteLine($"Words:{message}");
+                                //Console.ReadLine();
+                            }
+                            numAcctNameSuccess++;
                         }
                         else
                         {
-                            
+                            curVal = "";
                             if (!curVal.Contains("NULL") || !curVal.Contains("SID"))
                             {
                                 msgDict.Add("UserID", words[i + 2] + ",");
+                                Console.WriteLine($"Field Name Valid:{words[i + 2]}..2nd/3rd finding");
+                                Console.WriteLine($"Words:{message}");
+                                //Console.ReadLine();
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Field Name Rejected:{words[i + 2]}.....");
+                                Console.WriteLine($"Words:{message}");
+                                //Console.ReadLine();
                             }
                         }
-                    }catch
+                        Console.WriteLine($"Added UserID: {words[i] + " " + words[i + 1] + " " + words[i + 2]}");
+                        i += 2;
+                    }
+                    catch
                     {
                         Console.WriteLine($"Field: {i} Failed to read Account Name.....");
+
                         //Console.ReadLine();
+                        Console.WriteLine($"Words:{words}");
+                        numAcctNameFail++;
                     }
-                    //Console.WriteLine($"Added UserID: {words[i] + " " + words[i + 1] + " " + words[i + 2]}");
-                    i += 2;
+                    
+                    Console.WriteLine($"Event Logs Attempted: {numRecords}, UserID Success:{numAcctNameSuccess}, UserID Fail:{numAcctNameFail} ");
+
                 }//Account Name:/3
 
 
@@ -240,7 +290,7 @@ namespace NOGAste
 
 
 
-                    if (msgDict.TryGetValue(("Account_Domain"), out string curVal))
+                    if (msgDict.TryGetValue(("Account_Domain"), out  curVal))
                     {
                         msgDict["Account_Domain"] = curVal + acctDomUpd;
                     }
@@ -370,7 +420,7 @@ namespace NOGAste
                     //}
 
 
-                    if (msgDict.TryGetValue(("Logon_Failure"), out string curVal))
+                    if (msgDict.TryGetValue(("Logon_Failure"), out curVal))
                     {
                         msgDict["Logon_Failure"] = curVal + acctFailUpd;
                     }
@@ -430,7 +480,7 @@ namespace NOGAste
                     }
                     catch (Exception e)
                     {
-                        i += 2;
+                        Console.WriteLine("Field Fail: Process_Cmd_Line......");
                     }
                 }//Processs Command Line:/10
 
@@ -463,7 +513,7 @@ namespace NOGAste
                     tmpStr4 += words[i] + " ";
                     string failInfoUpd = tmpStr4;
 
-                    if (msgDict.TryGetValue(("Failure_Information"), out string curVal))
+                    if (msgDict.TryGetValue(("Failure_Information"), out curVal))
                     {
                         msgDict["Failure_Information"] = curVal + failInfoUpd;
                     }
@@ -472,7 +522,6 @@ namespace NOGAste
                         msgDict.Add("Failure_Information", failInfoUpd);
                     }
 
-                    msgDict.Add("Failure_Information: ", failInfoUpd);
                     //Console.WriteLine($"Failure Information: {failInfoUpd}");
                     //Console.ReadLine();
                     i += 2;
@@ -503,7 +552,7 @@ namespace NOGAste
                     string failReasonUpd = tmpStr5;
 
 
-                    if (msgDict.TryGetValue(("FailReason"), out string curVal))
+                    if (msgDict.TryGetValue(("FailReason"), out curVal))
                     {
                         msgDict["FailReason"] = curVal + failReasonUpd;
                     }
@@ -512,7 +561,6 @@ namespace NOGAste
                         msgDict.Add("FailReason", failReasonUpd);
                     }
 
-                    msgDict.Add("FailReason: ", failReasonUpd);
                     //Console.WriteLine($"Failure Reason: {failReasonUpd}");
                     //Console.ReadLine();
                     i += 2;
@@ -630,18 +678,20 @@ namespace NOGAste
 
 
 
-                else
-                {
-                    //Console.WriteLine($"NO SPECIFIC MATCH Adding: {words[i]}");
-                    msgFieldList.Add(words[i]);
-
-                }
+                //else
+                //{
+                //    //Console.WriteLine($"NO SPECIFIC MATCH Adding: {words[i]}");
+                //    msgFieldList.Add(words[i]);
+                //    msgDict.Add("Unknown", ","+words[i]);
+                //}
 
                 //Console.WriteLine($"----String Extraction From MSG Fields END -------");
+                numRecords++;
             }//for
 
-
-
+            Console.WriteLine($"Event Recovered From CSV------------------------------------------");
+            Console.WriteLine($"Event Logs Attempted: {numRecords}, UserID Success:{numAcctNameSuccess}, UserID Fail:{numAcctNameFail} ");
+            //Console.ReadLine();
             //for (int i = 0; i < msgDict.Count; i++)
             //{
             //    Console.WriteLine($"Key: {msgDict.ElementAt(i).Key},  Value: {msgDict.ElementAt(i).Value} ");
@@ -652,6 +702,10 @@ namespace NOGAste
             //return msgFieldList;
             return msgDict;
         }//convertMsgToFields
+
+
+
+
 
 
 

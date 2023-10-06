@@ -52,7 +52,7 @@ namespace NOGAste
             Command cmd = new Command("Get-WinEvent");
 
             //You can add parameters:
-            cmd.Parameters.Add("LogName", "application");
+            cmd.Parameters.Add("LogName", "security");
             //cmd.Parameters.Add("StartTime", "08:00");
             //cmd.Parameters.Add("EndTime", "09:00");
 
@@ -61,64 +61,92 @@ namespace NOGAste
 
             Collection<PSObject> output = pipeline.Invoke();
             //foreach (PSObject psObject in output)
+            Console.WriteLine($"Press return to retrieve all active logs in Application Log and insert into DB");
+            Console.ReadLine();
 
             string tmpEvtID   = "";
             string tmpTime    = "";
             string tmpUser    = "";
             string tmpMachine = "";
 
+            int innerCnt  = 0;
+            int outterCnt = 0;
+            int exceptCnt = 0;
             foreach (PSObject psObject in output)
             {
-                Console.WriteLine($"------------------------------------------ \n\n\n\n\n\n");
-                Console.ReadLine();
+                //Console.WriteLine($"------------------------------------------ \n\n\n\n\n\n");
+                //Console.ReadLine();
                 //Console.WriteLine("Properties and Values:");
                 foreach (var property in psObject.Properties)
                 {
-
                     try
                     {
+                        //Console.WriteLine($"-----------------------------------------\n");
+                        //Console.WriteLine($"INNER LOOP TOP\n");
+                        //Console.WriteLine($"Property:>{property.Name}< Value:>{property.Value}<");
+                        //Console.ReadLine();
+
                         //zzz
-                        if (property.Name == "ID")
+
+                        if ((property.Name).Trim() == "Id")
                         {
-                           tmpEvtID = (string)property.Value;
-                           Console.WriteLine($"EventID:{tmpEvtID}");
+                           tmpEvtID = (property.Value).ToString();
+                           //Console.WriteLine($"EventID:{tmpEvtID}");
+                           //Console.WriteLine($"-----------------WE GOT A Id HIT!!!-------------****************--");
+                           //Console.ReadLine();
                         }
 
-                        if (property.Name == "TimeCreated")
+                        if ((property.Name).Trim() == "TimeCreated")
                         {
-                           tmpTime = (string)property.Value;
-                           Console.WriteLine($"TimeCreated:{tmpTime}");
+                           tmpTime = (property.Value).ToString();
+                            //Console.WriteLine($"TimeCreated:{tmpTime}");
+                            //Console.WriteLine($"-----------------WE GOT A TIME  HIT!!!-----------****************--");
+                            //Console.ReadLine();
                         }
 
-                        if (property.Name == "UserID")
+                        if ((property.Name).Trim() == "UserID")
                         {
-                           tmpUser = (string)property.Value;
-                           Console.WriteLine($"UserID:{tmpUser}");
+                           tmpUser = (property.Value).ToString();
+                            Console.WriteLine($"UserID:{tmpUser}");
+                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
+                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
+                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
+                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
+                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
+                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
+                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
+                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
+                            //Console.ReadLine();
                         }
-                        if (property.Name == "MachineName")
+                        if ((property.Name).Trim() == "MachineName")
                         {
-                            tmpMachine = (string)property.Value;
-                            Console.WriteLine($"MachineName:{tmpMachine}");
+                           tmpMachine = (property.Value).ToString();
+                            //Console.WriteLine($"MachineName:{tmpMachine}");
+                            //Console.WriteLine($"-----------------WE GOT A Machine HIT!!!--------****************--");
+                            //Console.ReadLine();
                         }
 
-
-
-
+                        //Console.WriteLine($"Property:>{property.Name}< Value:>{property.Value}<\n");
+                        //Console.WriteLine($"Ttl Properties:{innerCnt}, Fail:{exceptCnt}, Events:{outterCnt}\n");
+                        //Console.WriteLine("--------INNER LOOP BOTTOM------");
+                        //Console.ReadLine();
+                        innerCnt++;
                     }//End Try
                     catch (Exception ex)
                     {
                         //Console.Write(ex.ToString());
-                        Console.Write("Unable to proces this event.......\n");
+                        exceptCnt++;
+                        //Console.Write($"TryCatch Ttl Properties:{innerCnt}, Fail:{exceptCnt}, Events:{outterCnt}, Unable to proces this event.......\n");
                         //Console.ReadLine();
                     }
 
 
-
+                    
                 }//End foreach inner
 
                 if (tmpEvtID == "")
                 {
-                    tmpEvtID = "4625";
+                    tmpEvtID = "9999";
                 }
 
                 if (tmpTime == "")
@@ -138,20 +166,25 @@ namespace NOGAste
 
                 var eventInstance = new Events  //(EventID, TimeCreated, MachineName, UserID);
                 {
-                    EventID = tmpEvtID,
+                    EventID     = tmpEvtID,
                     TimeCreated = tmpTime,
-                    UserID = tmpUser,
+                    UserID      = tmpUser,
                     MachineName = tmpMachine
                 };
 
                 var eventsRepo = new DapperEventsRepository(conn);
                 //Insert into DB
                 eventsRepo.InsertEvents(eventInstance);
-                Console.Write($"Event Processed, ID:{tmpEvtID}, Time:{tmpTime}, User:{tmpUser}, Host:{tmpMachine}\n");
-                Console.ReadLine();
+                Console.Write($"OUTTER Event Processed, TtlRecords Processed:{outterCnt} ID:{tmpEvtID}, Time:{tmpTime}, User:{tmpUser}, Host:{tmpMachine}\n");
 
+ 
+                //Console.ReadLine();
+                innerCnt = 0;
+                exceptCnt = 0;
+                outterCnt++;
             }//foreach outter
-
+             Console.Write($"Total Events Procesed,  Events:{outterCnt}, Total Fail:{exceptCnt}......\n");
+             Console.ReadLine();
         }//Method InsertEVT
 
 

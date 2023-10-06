@@ -37,7 +37,7 @@ namespace NOGAste
         //Method
         public static void ReadCSVFile()
         {
-            string filePath = "C:\\Users\\mcguertyj\\Documents\\Repos\\ZZZTest\\Raw_Events_Log_v0.4.9_100123.csv";
+            string filePath = "C:\\Users\\mcguertyj\\Documents\\Repos\\NOGAste\\Raw_Events_Log_v0.5.1_100523.csv";
 
 
             //Defines a boundary for the object outside of which
@@ -72,9 +72,10 @@ namespace NOGAste
 
                 //=================================================
 
-
-                int j = 0;
-                int k = 0;
+                Console.WriteLine($"Press return to retrieve events logs from CSV and insert into DB");
+                Console.ReadLine();
+                int csvField = 0;
+                int ttlEvents = 0;
                 while (!parser.EndOfData)
                 {
                     //define a string array that receives extracted each rows
@@ -182,9 +183,11 @@ namespace NOGAste
                         //NOW, access the extra fields from "msgDict" and UPDATE "logEntry"
                         //before its added to "eventLogEntries"
 
+                       
+
                         for (int i = 0; i < msgDict.Count; i++)
                         {
-                            Console.WriteLine($"Key: {msgDict.ElementAt(i).Key},  Value: {msgDict.ElementAt(i).Value} ");
+                            //Console.WriteLine($"Key: {msgDict.ElementAt(i).Key},  Value: {msgDict.ElementAt(i).Value} ");
                         }
                         //Console.WriteLine($"Finished Processing Message List - a Look at msgDict returned ");
                         //Console.ReadLine();
@@ -193,25 +196,25 @@ namespace NOGAste
 
                         if (msgDict.ContainsKey("UserID"))
                         {
-                            Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
+                            //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
                             logEntry.UserID = msgDict["UserID"];
-                            Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
-                            Console.ReadLine();
+                            //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
+                            //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("MachineName"))
                         {
-                            Console.WriteLine($"BEFORE: MachineName:{msgDict["MachineName"]} ");
+                            //Console.WriteLine($"BEFORE: MachineName:{msgDict["MachineName"]} ");
                             logEntry.MachineName = msgDict["MachineName"];
-                            Console.WriteLine($"AFTER:  MachineName:{msgDict["MachineName"]} ");
-                            Console.ReadLine();
+                            //Console.WriteLine($"AFTER:  MachineName:{msgDict["MachineName"]} ");
+                            //Console.ReadLine();
                         }
 
                         if (msgDict.ContainsKey("FailReason"))
                         {
-                            Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
+                            //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
                             logEntry.UserID = msgDict["FailReason"];
-                            Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
-                            Console.ReadLine();
+                            //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
+                            //Console.ReadLine();
                         }
 
                         //if (msgDict.ContainsKey("UserID") && msgDict.ContainsKey("MachineName") || msgDict.ContainsKey("Failure_Reason") );
@@ -224,19 +227,20 @@ namespace NOGAste
                             MachineName = logEntry.MachineName
                         };
                         //Adding the logEntry into the array "eventLogEntries"
-                        Console.WriteLine($"Writing Event: {j} to Array, Total Events: {k}");
+                        //Console.WriteLine($"Writing Event: {csvField} to Array, Total Events: {ttlEvents}");
                         eventLogEntries.Add(logEntry);
 
                         var eventsRepo = new DapperEventsRepository(conn);
                         //Insert into DB
                         eventsRepo.InsertEvents(eventInstance);
                         //Console.ReadLine() ;
-                        j++;
+                        csvField++;
                         //}
                     }//if
-                    k++;
+                    ttlEvents++;
                 }//while
-
+                Console.Write($"Total Events Procesed: {ttlEvents}.....\n");
+                Console.ReadLine();
             }//using
 
         }//ReadCSVFile Method

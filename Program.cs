@@ -22,6 +22,7 @@ using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using System.Data;
 using Markdig.Extensions.Figures;
+using System.Drawing;
 
 namespace NOGAste
 {
@@ -37,48 +38,31 @@ namespace NOGAste
         public static void Main(string[] args)
         {
 
-            var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .Build();
+            Console.WriteLine("\n\n\n\n");
+            Console.WriteLine("1. Import from CSV");
+            Console.WriteLine("2. Select from active Security Log");
+            Console.WriteLine("3. Select from active Application Log");
+            Console.WriteLine("");
+            Console.WriteLine("Select which event source to import ");
+            string userInput = Console.ReadLine().Trim();
 
-            string connString = config.GetConnectionString("DefaultConnection");
+            if (userInput  == "1")
+            {
+                PrepareCSVForImport.ReadCSVFile();
+            }
+            else if (userInput == "2") 
+            {
+                PrepareEVTForImport.InsertEVT();
+            }
 
-            IDbConnection conn = new MySqlConnection(connString);
-
-            //=================================================
-
-            //Console.WriteLine("Press return to begin to retrieve Events");
-            //Console.ReadLine();
-            //var eventsRepo = new DapperEventsRepository(conn);
-            //var eventsReturned = eventsRepo.GetEvents();
-
-            //foreach (var blah in eventsReturned)
-            //{
-            //    Console.WriteLine($"Event: {blah.EventID}, MachineName: {blah.MachineName}, UserName: {blah.UserName},  ");
-            //    Console.WriteLine("\n");
-            //    Console.ReadLine();
-            // }
+            else if (userInput == "2")
+            {
+                PrepareEVTForImport.InsertEVT();
+            }
+            Console.WriteLine("Processing Complete");
+            Console.WriteLine("\n\n\n\n");
 
 
-            //=================================================
-            //Console.WriteLine("Press return to begin to insert Events");
-            //Console.ReadLine();
-
-            //var eventInstance = new Events
-            //{
-            //    EventID = 999, 
-            //    TimeCreated = "13:00:00 08:21",
-            //    MachineName = "TimeMachine",
-            //    UserID      = "JamesBond"
-            //};
-
-            //var eventsRepo = new DapperEventsRepository(conn);
-            //eventsRepo.InsertEvents(eventInstance);
-
-            //PrepareCSVForImport.ReadCSVFile();
-            //PrepareEVTForImport.ReadEVT();
-            PrepareEVTForImport.InsertEVT();
         }//Main
 
 
