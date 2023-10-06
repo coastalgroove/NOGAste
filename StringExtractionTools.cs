@@ -1,4 +1,7 @@
-﻿using Markdig.Helpers;
+﻿using crypto;
+using Google.Protobuf.WellKnownTypes;
+using Markdig.Helpers;
+using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
@@ -7,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace NOGAste
@@ -33,7 +37,7 @@ namespace NOGAste
             for (int i = 0; i < words.Length; i++)
             {
 
-                Console.WriteLine("------------------------------------------------");
+                //Console.WriteLine("------------------------------------------------");
                 Console.WriteLine($"Current Word: {words[i]}");
                 Console.WriteLine("------------------------------------------------");
 
@@ -44,7 +48,7 @@ namespace NOGAste
                 //    Console.ReadLine();
                 //    msgFieldList.Add(words[i].Substring(0, words[i].Length - 1) + " " + words[i + 1]);
                 //    msgDict.Add("Subject", words[i + 1]);
-                //    Console.WriteLine($"Added Subject: {words[i].Substring(0, words[i].Length - 1) + " " + words[i + 1]}");
+                //    Console.WriteLine($">>>Added Subject: {words[i].Substring(0, words[i].Length - 1) + " " + words[i + 1]}");
                 //    i++;
                 //    
                 //}//Subject
@@ -53,29 +57,41 @@ namespace NOGAste
 
                 //EventMSG 1a
                 //Console.WriteLine($"----BEGIN MATCHING Current Word i:{i}, WrdLen:{words.Length}, TTL Words: {message.Length}, Searching for: >{words[i]}< --------");
+                //Special case of starting at index [0]
                 if (words[0] == "The" || words[0] == "Offline")
                 {   //When "EventMsg:" is missing from the EvenMsg, we add it, so this check must always be after chk for "EventMsg" so we don't duplicate
                     //Console.WriteLine($"Matched HEADLESS EventMsg");
                     //Console.ReadLine();
-                    string tmpStr1 = words[0];
                     string tmpStr2 = "";
-                    i++;
+                    //i++;
+
                     //int j = 0; //in case there is no "." we need to stop the train
-                    while (i < words.Length - i && !words[i].Contains('.'))
+                    while (i < words.Length)
                     {
-                        tmpStr2 += words[i] + " ";
-                         i++;
-                        //Console.WriteLine($"Searching for .  {tmpStr2} ");
-                    }
-                    //Get the last word
-                    if (i + 1 <= words.Length - 1)
-                    {
-                        tmpStr2 += " " + words[i + 1];
-                        i+=2;
+                        if (words[i].Contains('.'))
+                        {
+                            tmpStr2 += words[i]; // Include the word with the period
+                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Last Word:{words[i]}");
+                            break; // Exit the loop when a period is encountered
+                        }
+                        else
+                        {
+                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]}");
+                            tmpStr2 += words[i] + " "; // Concatenate words with spaces
+                        }
+
+                        i++;
+
+                        // Check if we've reached the end of the array
+                        if (i >= words.Length)
+                        {
+                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]} REACHED THE END");
+                            break;
+                        }
                     }
 
-
-                     if (msgDict.TryGetValue(("EventMsg"), out curVal))
+                    // Add the constructed sentence to the dictionary
+                    if (msgDict.TryGetValue("EventMsg", out curVal))
                     {
                         msgDict["EventMsg"] = curVal + tmpStr2;
                     }
@@ -84,15 +100,10 @@ namespace NOGAste
                         msgDict.Add("EventMsg", tmpStr2);
                     }
 
-                     //Get the last word
-                     if (i + 1 <= words.Length - 1)
-                         {
-                            tmpStr2 += " " + words[i + 1];
-                            i+=2;
-                          }
+                    if ( i+2 <= words.Length  && words[i+1] == "The") { i++; }  //If there are two sentences, skip the second one
 
-                    //Console.WriteLine($"Added EventMsg: {"EventMsg:" + " " + tmpStr1 + " " + tmpStr2}");
-                    //i++;
+                    Console.WriteLine($"EXITING The/Offline i:{i}, WordLen:{words.Length}");
+                    Console.WriteLine($">>>Added EventMsg: {tmpStr2}");
                 }//EventMsg "The"
 
 
@@ -106,15 +117,34 @@ namespace NOGAste
                     //Console.ReadLine();
                     string tmpStr1 = words[i];
                     string tmpStr2 = "";
-                    i++;
-                    while (!words[i].Contains('.'))
+                    i++; //advance past the "EventMsg"
+
+
+
+                    while (i < words.Length)
                     {
-                        tmpStr2 += words[i] + " ";
+                        if (words[i].Contains('.'))
+                        {
+                            tmpStr2 += words[i]; // Include the word with the period
+                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Last Word:{words[i]}");
+                            break; // Exit the loop when a period is encountered
+                        }
+                        else
+                        {
+                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]}");
+                            tmpStr2 += words[i] + " "; // Concatenate words with spaces
+                        }
+
                         i++;
-                        //Console.WriteLine($"Searching for .  {tmpStr2} ");
+
+                        // Check if we've reached the end of the array
+                        if (i >= words.Length)
+                        {
+                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]} REACHED THE END");
+                            break;
+                        }
                     }
-                    //get last word
-                    tmpStr2 += " " + words[i];
+
 
                     if (msgDict.TryGetValue(("EventMsg"), out curVal))
                     {
@@ -125,7 +155,7 @@ namespace NOGAste
                         msgDict.Add("EventMsg", tmpStr2);
                     }
 
-                   //Console.WriteLine($"Added EventMsg: {"EventMsg:" + " " + tmpStr1 + " " + tmpStr2}"); ;
+                    Console.WriteLine($">>>Added EventMsg: {tmpStr1 + " " + tmpStr2}"); ;
                     //i++;
                 }//EventMsg:
 
@@ -140,27 +170,34 @@ namespace NOGAste
                     //Console.ReadLine();
                     string tmpStr1 = words[i];
                     string tmpStr2 = "";
-                    i++;
-                    while (!words[i].Contains('.'))
+
+
+                    while (i < words.Length)
                     {
-                        tmpStr2 += words[i] + " ";
+                        if (words[i].Contains('.'))
+                        {
+                            tmpStr2 += words[i]; // Include the word with the period
+                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Last Word:{words[i]}");
+                            break; // Exit the loop when a period is encountered
+                        }
+                        else
+                        {
+                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]}");
+                            tmpStr2 += words[i] + " "; // Concatenate words with spaces
+                        }
+
                         i++;
-                        //Console.WriteLine($"Searching for .  {tmpStr2} ");
-                    }
-                    //Get the last word
-                    tmpStr2 += " " + words[i];
 
-                    if (msgDict.TryGetValue(("EventMsg"), out curVal))
-                    {
-                        msgDict["EventMsg"] = curVal + tmpStr2;
-                    }
-                    else
-                    {
-                        msgDict.Add("EventMsg", tmpStr2);
+                        // Check if we've reached the end of the array
+                        if (i >= words.Length)
+                        {
+                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]} REACHED THE END");
+                            break;
+                        }
                     }
 
 
-                    //Console.WriteLine($"Added EventMsg: {"EventMsg:" + " " + tmpStr1 + " " + tmpStr2}");
+                    Console.WriteLine($">>>Added EventMsg: {tmpStr1 + " " + tmpStr2}");
                     //i++;
                 }//EventMsg "Succesfully"
 
@@ -169,92 +206,64 @@ namespace NOGAste
 
 
                 //Security ID/2
-                else if (words[i] == "Security" && words[i + 1] == "ID:")
+                else if (words[i] == "Security" && words[i + 1] == "ID:" && words[i + 2] != "Account")
                 {
                     //Console.WriteLine($"Matched Security ID:");
                     //Console.ReadLine();
-                    msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]);
+                    msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2] );
                     string secIDUpd = words[i + 2] + " " + words[i + 3];
 
-                    if (msgDict.TryGetValue(("Security_ID"), out curVal))
+                    if (msgDict.TryGetValue(("SecurityID"), out curVal))
                     {
-                        msgDict["Security_ID"] = curVal + secIDUpd;
+                        msgDict["SecurityID"] = curVal + secIDUpd;
                     }
                     else
                     {
-                        msgDict.Add("Security_ID", words[i + 2] + " " + words[i + 3]);
+                        msgDict.Add("SecurityID", words[i + 2] );
                     }
-                    //Console.WriteLine($"Added  Security ID: {words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]}");
+                    Console.WriteLine($">>>Added  SecurityID: {words[i] + " " + words[i + 1] + " " + words[i + 2] }");
                     //Console.ReadLine();
-                    i += 3;
+                    i += 2;
                 }//Security ID:
 
 
 
 
 
-                
-            
-                
+
+
+
 
                 //Account Name/3
-                else if (words[i] == "Account" && words[i + 1] == "Name:"  &&  words[i + 2] != "New")
+                else if (words[i] == "Account" && words[i + 1] == "Name:"  &&  (words[i + 2] != "New" || words[i + 2] != "Account")   ) 
                 {
                     //Console.WriteLine($"Matched Account Name:");
                     //Console.ReadLine();
-                    msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2]);
-
                     string acctNamUpd = words[i + 2];
-
 
                     try
                     {
                         curVal = "";
-                        if (msgDict.TryGetValue(("UserID"), out  curVal))
-                        {
-                            if (!curVal.Contains("NULL") || !curVal.Contains("SID"))
-                            {
-                                msgDict["UserID"] = curVal + "," + acctNamUpd;
-                                Console.WriteLine($"Field Name Valid:{words[i + 2]}.....");
+                        if (!msgDict.ContainsKey("UserID") )
+                        { 
+                                msgDict.Add("UserID", words[i + 2]);
+                                Console.WriteLine($"Field Name Valid:{words[i + 2]}");
                                 Console.WriteLine($"Words:{message}");
                                 //Console.ReadLine();
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Field Name Rejected:{words[i + 2]}.....");
-                                Console.WriteLine($"Words:{message}");
-                                //Console.ReadLine();
-                            }
-                            numAcctNameSuccess++;
                         }
-                        else
-                        {
-                            curVal = "";
-                            if (!curVal.Contains("NULL") || !curVal.Contains("SID"))
-                            {
-                                msgDict.Add("UserID", words[i + 2] + ",");
-                                Console.WriteLine($"Field Name Valid:{words[i + 2]}..2nd/3rd finding");
-                                Console.WriteLine($"Words:{message}");
-                                //Console.ReadLine();
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Field Name Rejected:{words[i + 2]}.....");
-                                Console.WriteLine($"Words:{message}");
-                                //Console.ReadLine();
-                            }
-                        }
-                        Console.WriteLine($"Added UserID: {words[i] + " " + words[i + 1] + " " + words[i + 2]}");
+
+                        Console.WriteLine($">>>Added UserID: {words[i + 2]}");
                         i += 2;
                     }
                     catch
                     {
-                        Console.WriteLine($"Field: {i} Failed to read Account Name.....");
+                        //Console.WriteLine($"Field: {i} Failed to read Account Name.....");
 
                         //Console.ReadLine();
                         Console.WriteLine($"Words:{words}");
                         numAcctNameFail++;
-                    }
+                    }//end catch
+
                     
                     Console.WriteLine($"Event Logs Attempted: {numRecords}, UserID Success:{numAcctNameSuccess}, UserID Fail:{numAcctNameFail} ");
 
@@ -267,7 +276,7 @@ namespace NOGAste
 
 
                 //Account Domain/4
-                else if (words[i] == "Account" && words[i + 1] == "Domain:")
+                else if (words[i] == "Account" && words[i + 1] == "Domain:" && ( words[i + 2].Contains("NT") || words[i + 2] == "WORKGROUP" )  )
                 {
                     //Console.WriteLine($"Matched Account Domain:");
                     //Console.ReadLine();
@@ -275,39 +284,19 @@ namespace NOGAste
                     //msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2]);
 
                     string acctDomUpd = "";
-                    bool incExtra = true;
 
-                    if (words[i + 2] == "Failure")
+
+                    if (msgDict.TryGetValue(("AcctDomain"), out  curVal))
                     {
-                        acctDomUpd = "NULL";
-                        incExtra = false;
+                        msgDict["AcctDomain"] = curVal + acctDomUpd;
                     }
                     else
                     {
-                        acctDomUpd = words[i + 2];
-                        incExtra = true;
+                        msgDict.Add("AcctDomain", words[i + 2]);
                     }
 
+                        Console.WriteLine($">>>Added AcctDomain: {acctDomUpd}");
 
-
-                    if (msgDict.TryGetValue(("Account_Domain"), out  curVal))
-                    {
-                        msgDict["Account_Domain"] = curVal + acctDomUpd;
-                    }
-                    else
-                    {
-                        msgDict.Add("Account_Domain", words[i + 2]);
-                    }
-
-                    if (incExtra)
-                    {
-                        //Console.WriteLine($"Added Account Domain: {words[i] + " " + words[i + 1] + acctDomUpd}");
-                        i++;
-                    }
-                    else
-                    {
-                        //Console.WriteLine($"Added Account Domain: {words[i] + " " + words[i + 1] + acctDomUpd}");
-                    }
                     //Console.ReadLine();
                     i += 2;
                 }//Account Domain:/4
@@ -331,7 +320,7 @@ namespace NOGAste
 
                     msgFieldList.Add(part1 + " " + part2);
                     msgDict.Add("MachineName", part2);
-                    //Console.WriteLine($"Added MachineName: {part1 + " " + part2}");
+                    Console.WriteLine($">>>Added MachineName: {part1 + " " + part2}");
                 }//MachineName:/5
 
 
@@ -340,37 +329,26 @@ namespace NOGAste
 
 
                 //Logon ID/6
-                else if (words[i] == "Logon" && words[i + 1] == "ID:")
+                else if ( words.Length - i > 3 )
                 {
-                    try
+                    if (words[i] == "Logon" && words[i + 1] == "ID:" && words[i + 2].Contains("0x"))
                     {
-
-                        if (words[i + 2].Contains("0x"))
+                        try
                         {
                             //Console.WriteLine($"Matched Logon ID:");
                             //Console.ReadLine();
-                            msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2]);
-                            msgDict.Add("Logon_ID", words[i + 2]);
-                            //Console.WriteLine($"Added Logon ID: {words[i] + " " + words[i + 1] + " " + words[i + 2]}");
+                            msgDict.Add("LogonID", words[i + 2]);
+                            Console.WriteLine($">>>Added LogonID: {words[i + 2]}");
                             //Console.ReadLine();
                             i += 2;
-                        }//if
 
-                        else
-                        {
-                            //Console.WriteLine($"Logon ID is NULL");
-                            msgFieldList.Add(words[i] + " " + words[i + 1] + " NULL");
-                            msgDict.Add("Logon_ID", " NULL");
-                            //Console.WriteLine($"Added Logon ID: {words[i]},  {words[i + 1]}  NULL");
-                            //Console.ReadLine();
-                            i += 1;
-                        }//else
-
-                    } catch (Exception e)
-                        {
-                        //Console.WriteLine($"Field: {i}, Failed Read Logon ID");
-                        //Console.ReadLine();
                         }
+                        catch (Exception e)
+                        {
+                            //Console.WriteLine($"Field: {i}, Failed Read Logon ID");
+                            //Console.ReadLine();
+                        }//catch
+                    }//inner if
                 }//Logon ID/6
 
 
@@ -379,17 +357,41 @@ namespace NOGAste
 
 
                 //Logon Type/7
-                else if (words[i] == "Logon" && words[i + 1] == "Type:")
+                else if (words[i] == "Logon" && words[i + 1] == "Type:"  && words[i + 2] != "Account")
                 {
                     //Console.WriteLine($"Matched Logon Type:");
                     //Console.ReadLine();
-                    msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2]);
-                    msgDict.Add("Logon_Type: ", words[i + 2]);
-                    //Console.WriteLine($"Added Logon Type: {words[i] + " " + words[i + 1] + " " + words[i + 2]}");
+                    msgDict.Add("LogonType: ", words[i + 2]);
+                    Console.WriteLine($">>>Added LogonType: {words[i + 2]}");
                     //Console.ReadLine();
                     i += 2;
                 }//Logon Type:/7
 
+
+
+                //Logon Type/8
+                else if (words[i] == "Elevated" && words[i + 1] == "Token:" && ( words[i + 2] == "Yes" || words[i + 2] == "No" ))
+                {
+                    //Console.WriteLine($"Matched Logon Type:");
+                    //Console.ReadLine();
+                    msgDict.Add("Elevated_Token: ", words[i + 2]);
+                    Console.WriteLine($">>>Added ElevToken: {words[i + 2]}");
+                    //Console.ReadLine();
+                    i += 2;
+                }//Logon Type:/8
+
+
+
+                //Logon Type/9
+                else if (words[i] == "Impersonation" && words[i + 1] == "Level:" && words[i + 2] == "Impersonation")
+                {
+                    //Console.WriteLine($"Matched Logon Type:");
+                    //Console.ReadLine();
+                    msgDict.Add("ImpersonationLvl: ", words[i + 2]);
+                    Console.WriteLine($">>>Added ImpersonationLvl: {words[i + 2]}");
+                    //Console.ReadLine();
+                    i += 2;
+                }//Logon Type:/9
 
 
 
@@ -420,22 +422,23 @@ namespace NOGAste
                     //}
 
 
-                    if (msgDict.TryGetValue(("Logon_Failure"), out curVal))
+                    if (msgDict.TryGetValue(("LogonFailure"), out curVal))
                     {
-                        msgDict["Logon_Failure"] = curVal + acctFailUpd;
+                        msgDict["LogonFailure"] = curVal + acctFailUpd;
                     }
                     else
                     {
-                        msgDict.Add("Logon_Failure", acctFailUpd);
+                        msgDict.Add("LogonFailure", acctFailUpd);
                     }
                     //if (incExtra)
                     //{
-                    //    //Console.WriteLine($"Added  Account Logon Failure: {words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3] + " " + words[i + 4] + " " + acctFailUpd}");
+                    //    //Console.WriteLine($">>>Added  Account Logon Failure: {words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3] + " " + words[i + 4] + " " + acctFailUpd}");
                     //    i += 5;
                     //}
                     //else
                     //{
-                    //Console.WriteLine($"Added  Account Logon Failure: {words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3] + " " + words[i + 4] + " " + acctFailUpd}");
+
+                    Console.WriteLine($">>>Added  LogonFailure: {words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3] + " " + words[i + 4] + " " + acctFailUpd}");
 
                     i += 4;
                     //}
@@ -450,13 +453,12 @@ namespace NOGAste
 
 
                 //New Process Name/9
-                else if (words[i] == "New" && words[i + 1] == "Process" && words[i + 2] == "Name:")
+                else if (words[i] == "New" && words[i + 1] == "Process" && words[i + 2] == "Name:" && words[i + 2].Contains("C:\\") )
                 {
                     //Console.WriteLine($"Matched New Process Name:");
                     //Console.ReadLine();
-                    msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]);
-                    msgDict.Add("New_Process_Name", words[i + 3]);
-                    //Console.WriteLine($"Added Process Name: {words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]}");
+                    msgDict.Add("NewProcessName", words[i + 3]);
+                    Console.WriteLine($">>>Added NewProcessName: {words[i + 2] + " " + words[i + 3]}");
                     i += 3;
                 }//New Process Name:/9
 
@@ -474,14 +476,18 @@ namespace NOGAste
                         //Console.WriteLine($"Matched Process Command Line:");
                         //Console.ReadLine();
                         msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]);
-                        msgDict.Add("Process_Cmd_Line", words[i + 3]);
-                        //Console.WriteLine($"Added Process Command Line: {words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]}");
+                        msgDict.Add("ProcessCmdLine", words[i + 3]);
+                        //Console.WriteLine($">>>Added Process Command Line: {words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]}");
+                        Console.WriteLine($">>>Added ProcessCmdLine: {words[i + 3]}");
                         i += 3;
+
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("Field Fail: Process_Cmd_Line......");
+                        Console.WriteLine("Field Fail: ProcessCmdLine......");
                     }
+
+                    //Console.ReadLine();
                 }//Processs Command Line:/10
 
 
@@ -491,38 +497,25 @@ namespace NOGAste
 
 
 
-
-
-
-
                 //Failure Information/11
-                else if (words[i] == "Failure" && words[i + 1] == "Information:")
+                else if (words[i] == "Failure" && words[i + 1] == "Information:"  && words[i + 2] != "Failure")
                 {
                     //Console.WriteLine($"Matched Failure Information:");
                     //Console.ReadLine();
-                    string tmpStr4 = "";
+                    string tmpStr5 = words[i + 2];
 
-                    i++;
-                    while (!words[i].Contains('.'))
-                    {
-                        tmpStr4 += words[i] + " ";
-                        i++;
-                        //Console.WriteLine($"Searching for .  {tmpStr4} ");
-                    }
-                    //Get the last word
-                    tmpStr4 += words[i] + " ";
-                    string failInfoUpd = tmpStr4;
 
-                    if (msgDict.TryGetValue(("Failure_Information"), out curVal))
+
+                    if (msgDict.TryGetValue(("FailInfo"), out curVal))
                     {
-                        msgDict["Failure_Information"] = curVal + failInfoUpd;
+                        msgDict["FailInfo"] = curVal + words[i + 2];
                     }
                     else
                     {
-                        msgDict.Add("Failure_Information", failInfoUpd);
+                        msgDict.Add("FailInfo", words[i + 2]);
                     }
 
-                    //Console.WriteLine($"Failure Information: {failInfoUpd}");
+                    Console.WriteLine($">>>Added FailInfo: {words[i + 2]}");
                     //Console.ReadLine();
                     i += 2;
                 }//Failure Information:/11
@@ -534,36 +527,52 @@ namespace NOGAste
 
 
                 //Failure Reason/12
-                else if (words[i] == "Failure" && words[i + 1] == "Reason:")
+                else if (words[i] == "Failure" && words[i + 1] == "Reason:"  && words[i + 2] == "Unknown")
                 {
                     //Console.WriteLine($"Matched Failure Reason:");
                     //Console.ReadLine();
+                    //Console.WriteLine($"Failure Reason BEFORE INC, i:{i}, WrdLen:{words.Length}, Current Word:{words[i]}");
+                    i+=2; //skip over "Reason:"
+                    //Console.WriteLine($"Failure Reason AFTER INC, BEFORE LOOP i:{i}, WrdLen:{words.Length}, Current Word:{words[i]}");
                     string tmpStr5 = "";
 
-                    i++;
-                    while (!words[i].Contains('.'))
+                    while (i < words.Length)
                     {
-                        tmpStr5 += words[i] + " ";
+                        if (words[i].Contains('.'))
+                        {
+                            tmpStr5 += words[i]; // Include the word with the period
+                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Last Word:{words[i]}");
+                            break; // Exit the loop when a period is encountered
+                        }
+                        else
+                        {
+                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]}");
+                            tmpStr5 += words[i] + " "; // Concatenate words with spaces
+                        }
+
                         i++;
-                        //Console.WriteLine($"Searching for .  {tmpStr5} ");
+
+                        // Check if we've reached the end of the array
+                        if (i >= words.Length)
+                        {
+                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]} REACHED THE END");
+                            break;
+                        }
                     }
-                    //Get the last word
-                    tmpStr5 += words[i] + " ";
-                    string failReasonUpd = tmpStr5;
 
 
                     if (msgDict.TryGetValue(("FailReason"), out curVal))
                     {
-                        msgDict["FailReason"] = curVal + failReasonUpd;
+                        msgDict["FailReason"] = curVal + tmpStr5;
                     }
                     else
                     {
-                        msgDict.Add("FailReason", failReasonUpd);
+                        msgDict.Add("FailReason", tmpStr5);
                     }
 
-                    //Console.WriteLine($"Failure Reason: {failReasonUpd}");
+                    Console.WriteLine($">>>Added FailReason: {tmpStr5}");
                     //Console.ReadLine();
-                    i += 2;
+
                 }//Failure Reason:/12
 
 
@@ -577,13 +586,12 @@ namespace NOGAste
 
 
                 //Status/13
-                else if (words[i] == "Status:" && words[i + 1] == "0x" && words[i + 1] != "Sub")
+                else if (words[i] == "Status:" && words[i + 1].Contains("0x"))
                 {
-                    //Console.WriteLine($"Matched Status");
+                    Console.WriteLine($"Matched Status");
                     //Console.ReadLine();
-                    msgFieldList.Add(words[i] + " " + words[i + 1]);
                     msgDict.Add("Status", words[i + 1]);
-                    //Console.WriteLine($"Added Status: {words[i].Substring(0, words[i].Length - 1) + " " + words[i + 1]}");
+                    Console.WriteLine($">>>Added Status: {words[i + 1]}");
                     i++;
                 }//Status:/13
 
@@ -592,13 +600,12 @@ namespace NOGAste
 
 
                 //Sub Status/14
-                else if (words[i] == "Sub" && words[i + 1] == "Status:")
+                else if (words[i] == "Sub" && words[i + 1] == "Status:" && words[i + 2].Contains("0x"))
                 {
-                    //Console.WriteLine($"Matched Sub Status");
+                    //Console.WriteLine($"Matched SubStatus");
                     //Console.ReadLine();
-                    msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2]);
                     msgDict.Add("Sub_Status", words[i + 2]);
-                    //Console.WriteLine($"Added Sub Status: {words[i] + " " + words[i + 1] + " " + words[i + 2]}");
+                    Console.WriteLine($">>>Added SubStatus: {words[i + 2]}");
                     i += 2;
                 }//Sub Status:/14
 
@@ -607,40 +614,43 @@ namespace NOGAste
 
 
                 //Process Information/15
-                else if (words[i] == "Process" && words[i + 1] == "Information:")
+                else if (words[i] == "Process" && words[i + 1] == "Information:" && words[i + 2].Contains("C:\\"))
                 {
                     //Console.WriteLine($"Matched Process Information");
                     //Console.ReadLine();
-                    msgFieldList.Add(words[i] + " " + words[i + 1]);
-                    msgDict.Add("Process_Information", words[i + 1]);
-                    //Console.WriteLine($"Added Process Information: {words[i].Substring(0, words[i].Length - 1) + " " + words[i + 1]}");
-                    i++;
+                    msgDict.Add("ProcessInfo", words[i + 2]);
+                    Console.WriteLine($">>>Added ProcessInfo: {words[i + 2]}");
+                    i+=2;
                 }//Sub Status:15
 
 
 
 
 
+                //Process Information/16
+                else if (words[i] == "Object" && words[i + 1] == "Name:" && words[i + 2].Contains("C:\\"))
+                {
+                    //Console.WriteLine($"Matched Process Information");
+                    //Console.ReadLine();
+                    msgDict.Add("ObjectName", words[i + 2]);
+                    Console.WriteLine($">>>Added ObjectName:  {words[i + 2]}");
+                    i +=2;
+                }//Sub Status:16
 
 
 
 
 
-                //Reason/16
-                else if (words[i] == "Reason:")
+                //Reason/17
+                else if (words[i] == "Reason:" && words[i + 1] == "RulesEngine.")
                 {
                     //Console.WriteLine($"Matched Reason:");
                     //Console.ReadLine();
-                    msgFieldList.Add(words[i] + " " + words[i + 1]);
                     msgDict.Add("Reason", words[i + 1]);
-                    //Console.WriteLine($"Added Reason: {words[i].Substring(0, words[i].Length - 1) + " " + words[i + 1]}");
+                    Console.WriteLine($">>>AddedReason: {words[i + 1]}");
                     //Console.ReadLine() ;
                     i++;
-                }//Reason:/16
-
-
-
-
+                }//Reason:/17
 
 
 
@@ -665,7 +675,7 @@ namespace NOGAste
                 //        {
                 //            msgDict.Add("ID", words[i + 1]);
                 //        }
-                //        //Console.WriteLine($"Added Matched ID: {words[i].Substring(0, words[i].Length - 1) + " " + words[i + 1]}");
+                //        //Console.WriteLine($">>>Added Matched ID: {words[i].Substring(0, words[i].Length - 1) + " " + words[i + 1]}");
                 //        //Console.ReadLine();
                 //        i++;
                 //    }//try
@@ -689,7 +699,7 @@ namespace NOGAste
                 numRecords++;
             }//for
 
-            Console.WriteLine($"Event Recovered From CSV------------------------------------------");
+            Console.WriteLine($"Event Recovered From CSV\n");
             Console.WriteLine($"Event Logs Attempted: {numRecords}, UserID Success:{numAcctNameSuccess}, UserID Fail:{numAcctNameFail} ");
             //Console.ReadLine();
             //for (int i = 0; i < msgDict.Count; i++)

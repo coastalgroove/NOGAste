@@ -32,18 +32,40 @@ namespace NOGAste
             //(place holders) <==> Temporary Object to
             //safely pass in parameters
             _conn.Execute("INSERT INTO Events" +
-                          " (EventID, TimeCreated, MachineName, UserID)  " +
+                          " (EventID, TimeCreated,  EventMsg, LogonType, ElevToken, " +
+                          " ImpersonateLvl, LogonFail, FailInfo, FailReason, MachineName, UserID," +
+                          " ProgramRun, CommandRun, FileAccess, LogLvl, Status, SubStatus, Reason)  " +
                           " VALUES " +
-                          " (@EventID, @TimeCreated, @MachineName, @UserID)",
+                          " (@EventID, @TimeCreated, @EVentMsg, @LogonType, @ElevToken, " +
+                          " @ImpersonateLvl, @LogonFail, @FailInfo, @FailReason, @MachineName, " +
+                          " @UserID, @ProgramRun, @CommandRun, @FileAccess, @LogLvl, @Status, " +
+                          " @SubStatus, @Reason)",
                           new {
-                              eventID      = events.EventID,
-                              timeCreated  = events.TimeCreated,
-                              machineName  = events.MachineName,
-                              userID       = events.UserID,
-                              //failReason   = events.FailReason,
-                              });
-             }
+                              eventID        = events.EventID,
+                              timeCreated    = events.TimeCreated,
+                              eventMsg       = events.EventMsg,
+                              logonType      = events.LogonType,
+                              elevToken      = events.ElevToken,
+                              impersonateLvl = events.ImpersonateLvl,
+                              logonFail      = events.LogonFail,
+                              failInfo       = events.FailInfo,
+                              failReason     = events.FailReason,
+                              machineName    = events.MachineName,
+                              userID         = events.UserID,
+                              programRun     = events.ProgramRun,
+                              commandRun     = events.CommandRun,
+                              fileAccess     = events.FileAccess,
+                              logLvl         = events.LogLvl,
+                              status         = events.Status,
+                              subStatus      = events.SubStatus,
+                              reason         = events.Reason,
 
+                          });
+             }
+        //afterHours     = events.AfterHours,
+        //logonSuccess   = events.LogonSuccess,
+        //threatEval     = events.ThreatEval,
+        //actionReqd     = events.ActionReqd,
 
     }//Class
 }//Namespace

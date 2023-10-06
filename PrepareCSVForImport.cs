@@ -22,6 +22,9 @@ using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using System.Data;
 using Markdig.Extensions.Figures;
+using System.Drawing;
+using System.Dynamic;
+using System.ServiceModel;
 
 namespace NOGAste
 {
@@ -37,7 +40,7 @@ namespace NOGAste
         //Method
         public static void ReadCSVFile()
         {
-            string filePath = "C:\\Users\\mcguertyj\\Documents\\Repos\\NOGAste\\Raw_Events_Log_v0.5.1_100523.csv";
+            string filePath = "C:\\Users\\mcguertyj\\Documents\\Repos\\NOGAste\\Raw_Events_Log_v0.5.3_100523.csv";
 
 
             //Defines a boundary for the object outside of which
@@ -82,75 +85,84 @@ namespace NOGAste
                     //with 27 columns (fields) into an array
                     string[] fields = parser.ReadFields();
 
-
+                    //THESE PROPERTIES ARE STRICTLY MATCHING STANDARD EVT LOG
+                    //FOR READING IN FROM CSV - WHICH MATCHES AN EVT
                     if (fields.Length >= 27)  //this "if" doesn't really need to be here
                     {   //These are variables that correlate to columns(named
                         //headers) in the .CSV file 
-                        string Message = fields[0];
-                        string EventID = fields[1];
-                        string Version = fields[2];
-                        string Qualifiers = fields[3];
-                        string Level = fields[4];
-                        string Task = fields[5];
-                        string Opcode = fields[6];
-                        string Keywords = fields[7];
-                        string Recordid = fields[8];
-                        string ProviderName = fields[9];
+                        string Message              = fields[0];
+                        string EventID              = fields[1];
+                        string Version              = fields[2];
+                        string Qualifiers           = fields[3];
+                        string Level                = fields[4];
+                        string Task                 = fields[5];
+                        string Opcode               = fields[6];
+                        string Keywords             = fields[7];
+                        string Recordid             = fields[8];
+                        string ProviderName         = fields[9];
 
-                        string ProviderID = fields[10];
-                        string LogName = fields[11];
-                        string ProcessID = fields[12];
-                        string ThreadID = fields[13];
-                        string MachineName = fields[14];
-                        string UserID = fields[15];
-                        string TimeCreated = fields[16];
-                        string ActivityID = fields[17];
-                        string RelatedActivity = fields[18];
-                        string ContainerLog = fields[19];
+                        string ProviderID           = fields[10];
+                        string LogName              = fields[11];
+                        string ProcessID            = fields[12];
+                        string ThreadID             = fields[13];
+                        string MachineName          = fields[14];
+                        string UserID               = fields[15];
+                        string TimeCreated          = fields[16];
+                        string ActivityID           = fields[17];
+                        string RelatedActivity      = fields[18];
+                        string ContainerLog         = fields[19];
 
-                        string MatchedQueryIDs = fields[20];
-                        string Bookmark = fields[21];
-                        string LevelDisplayName = fields[22];
-                        string OpcodeDisplayName = fields[23];
-                        string TaskDisplayName = fields[24];
+                        string MatchedQueryIDs      = fields[20];
+                        string Bookmark             = fields[21];
+                        string LevelDisplayName     = fields[22];
+                        string OpcodeDisplayName    = fields[23];
+                        string TaskDisplayName      = fields[24];
                         string KeywordsDisplayNames = fields[25];
-                        string Properties = fields[26];
+                        string Properties           = fields[26];
 
 
                         //I tried this but could not get it to work
                         //EventLogEntry logEntry = new EventLogEntry()
 
+                        
+
+                        string EventMsg       = "";
+                        string LogonType      = "";
+                        string ElevToken      = "";
+                        string ImpersonateLvl = "";
+                        string LogonFail      = "";
+                        string FailInfo       = "";
+                        string FailReason     = "";
+                        string ProgramRun     = "";
+                        string CommandRun     = "";
+                        string FileAccess     = "";
+                        string LogLvl         = "";
+                        string Status         = "";
+                        string SubStatus      = "";
+                        string Reason         = "";
+
                         //So I created my own class EventLogCSVImport
                         EventLogCSVImport logEntry = new EventLogCSVImport(
-                                     Message,
-                                     EventID,
-                                     Version,
-                                     Qualifiers,
-                                     Level,
-                                     Task,
-                                     Opcode,
-                                     Keywords,
-                                     Recordid,
-                                     ProviderName,
-
-                                     ProviderID,
-                                     LogName,
-                                     ProcessID,
-                                     ThreadID,
-                                     MachineName,
-                                     UserID,
-                                     TimeCreated,
-                                     ActivityID,
-                                     RelatedActivity,
-                                     ContainerLog,
-
-                                     MatchedQueryIDs,
-                                     Bookmark,
-                                     LevelDisplayName,
-                                     OpcodeDisplayName,
-                                     TaskDisplayName,
-                                     KeywordsDisplayNames,
-                                     Properties
+                            EventID,
+                            TimeCreated,
+                            EventMsg,
+                            LogonType,
+                            ElevToken,
+                            ImpersonateLvl,
+                            LogonFail,
+                            FailInfo,
+                            FailReason,
+                            //public string   AfterHours,
+                            //public string   LogonSuccess,
+                            MachineName,
+                            UserID,
+                            ProgramRun,
+                            CommandRun,
+                            FileAccess,
+                            LogLvl,
+                            Status,
+                            SubStatus,
+                            Reason
                                      );
 
 
@@ -178,7 +190,7 @@ namespace NOGAste
 
                         //This converts a monoloithic msg text to distinct fields and values (best try)
                         Dictionary<string, string> msgDict = new Dictionary<string, string>();
-                        msgDict = StringExtractionTools.convertMsgToFields(logEntry.Message);
+                        msgDict = StringExtractionTools.convertMsgToFields(Message);
 
                         //NOW, access the extra fields from "msgDict" and UPDATE "logEntry"
                         //before its added to "eventLogEntries"
@@ -217,20 +229,50 @@ namespace NOGAste
                             //Console.ReadLine();
                         }
 
-                        //if (msgDict.ContainsKey("UserID") && msgDict.ContainsKey("MachineName") || msgDict.ContainsKey("Failure_Reason") );
-                        //{
+                        //Intance of class "Events"
                         var eventInstance = new Events  //(EventID, TimeCreated, MachineName, UserID);
                         {
-                            EventID = logEntry.EventID,
-                            TimeCreated = logEntry.TimeCreated,
-                            UserID = logEntry.UserID,
-                            MachineName = logEntry.MachineName
+                            EventID        = logEntry.EventID,
+                            TimeCreated    = logEntry.TimeCreated,
+                            EventMsg       = logEntry.EventMsg,
+                            LogonType      = logEntry.LogonType,
+                            ElevToken      = logEntry.ElevToken,
+                            ImpersonateLvl = logEntry.ImpersonateLvl,
+                            LogonFail      = logEntry.LogonFail,
+                            FailInfo       = logEntry.FailInfo,
+                            FailReason     = logEntry.FailReason,
+                            //AfterHours     = logEntry.AfterHours,
+                            //LogonSuccess   = logEntry.LogonSuccess,
+                            MachineName    = logEntry.MachineName,
+                            UserID         = logEntry.UserID,
+                            ProgramRun     = logEntry.ProgramRun,
+                            CommandRun     = logEntry.CommandRun,
+                            FileAccess     = logEntry.FileAccess,
+                            LogLvl         = logEntry.LogLvl,
+                            Status         = logEntry.Status,
+                            SubStatus      = logEntry.SubStatus,
+                            Reason         = logEntry.Reason
+                            //ThreatEval     = logEntry.ThreatEval,
+                            //ActionReqd     = logEntry.ActionReqd,
                         };
                         //Adding the logEntry into the array "eventLogEntries"
                         //Console.WriteLine($"Writing Event: {csvField} to Array, Total Events: {ttlEvents}");
                         eventLogEntries.Add(logEntry);
 
                         var eventsRepo = new DapperEventsRepository(conn);
+                        int j = 0;
+                        int k = 0;
+                        foreach (var item in eventLogEntries)
+                        {
+                            Console.WriteLine($"Event:{j} -----EventLogEntries------");
+                            Console.WriteLine($"EventID:{item.EventID}");
+                            Console.WriteLine($"UserID:{item.UserID}");
+                            Console.WriteLine($"ProgramRun:{item.ProgramRun}");
+                            Console.WriteLine($"CommandRun:{item.CommandRun}");
+                            Console.WriteLine($"FileAccess:{item.FileAccess}");
+                            Console.ReadLine();
+                            j++;
+                        }//out foreach
                         //Insert into DB
                         eventsRepo.InsertEvents(eventInstance);
                         //Console.ReadLine() ;
