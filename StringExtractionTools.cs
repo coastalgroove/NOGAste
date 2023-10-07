@@ -38,7 +38,7 @@ namespace NOGAste
             {
 
                 //Console.WriteLine("------------------------------------------------");
-                Console.WriteLine($"Current Word: {words[i]}");
+                Console.WriteLine($"Current Word: >{words[i]}<");
                 Console.WriteLine("------------------------------------------------");
 
                 //Subject/1 appears to never have anything in it
@@ -58,11 +58,11 @@ namespace NOGAste
                 //EventMSG 1a
                 //Console.WriteLine($"----BEGIN MATCHING Current Word i:{i}, WrdLen:{words.Length}, TTL Words: {message.Length}, Searching for: >{words[i]}< --------");
                 //Special case of starting at index [0]
-                if (words[0] == "The" || words[0] == "Offline")
+                if (words[0] == "The" || words[0] == "Offline" || words[0] == "Successfully")
                 {   //When "EventMsg:" is missing from the EvenMsg, we add it, so this check must always be after chk for "EventMsg" so we don't duplicate
                     //Console.WriteLine($"Matched HEADLESS EventMsg");
                     //Console.ReadLine();
-                    string tmpStr2 = "";
+                    string tmpEvntMsgStr = "";
                     //i++;
 
                     //int j = 0; //in case there is no "." we need to stop the train
@@ -70,40 +70,38 @@ namespace NOGAste
                     {
                         if (words[i].Contains('.'))
                         {
-                            tmpStr2 += words[i]; // Include the word with the period
+                            tmpEvntMsgStr += words[i]; // Include the word with the period
                             //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Last Word:{words[i]}");
                             break; // Exit the loop when a period is encountered
                         }
                         else
                         {
                             //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]}");
-                            tmpStr2 += words[i] + " "; // Concatenate words with spaces
+                            tmpEvntMsgStr += words[i] + " "; // Concatenate words with spaces
                         }
-
                         i++;
-
                         // Check if we've reached the end of the array
                         if (i >= words.Length)
                         {
                             //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]} REACHED THE END");
                             break;
                         }
+                    }//while
+                    if (tmpEvntMsgStr.Length > 50)
+                    {
+                        tmpEvntMsgStr = tmpEvntMsgStr.Substring(0, 40);
+                        Console.WriteLine($"EventMsg:{tmpEvntMsgStr}");
                     }
 
-                    // Add the constructed sentence to the dictionary
-                    if (msgDict.TryGetValue("EventMsg", out curVal))
+                    if (!msgDict.ContainsKey("EventMsg") )
                     {
-                        msgDict["EventMsg"] = curVal + tmpStr2;
-                    }
-                    else
-                    {
-                        msgDict.Add("EventMsg", tmpStr2);
+                        msgDict["EventMsg"] = tmpEvntMsgStr;
                     }
 
                     if ( i+2 <= words.Length  && words[i+1] == "The") { i++; }  //If there are two sentences, skip the second one
 
                     Console.WriteLine($"EXITING The/Offline i:{i}, WordLen:{words.Length}");
-                    Console.WriteLine($">>>Added EventMsg: {tmpStr2}");
+                    Console.WriteLine($">>>Added EventMsg: {tmpEvntMsgStr}");
                 }//EventMsg "The"
 
 
@@ -116,91 +114,42 @@ namespace NOGAste
                     //Console.WriteLine($"Matched EventMsg");
                     //Console.ReadLine();
                     string tmpStr1 = words[i];
-                    string tmpStr2 = "";
+                    string tmpEventMsgStr2 = "";
                     i++; //advance past the "EventMsg"
 
-
-
                     while (i < words.Length)
                     {
                         if (words[i].Contains('.'))
                         {
-                            tmpStr2 += words[i]; // Include the word with the period
+                            tmpEventMsgStr2 += words[i]; // Include the word with the period
                             //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Last Word:{words[i]}");
                             break; // Exit the loop when a period is encountered
                         }
                         else
                         {
                             //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]}");
-                            tmpStr2 += words[i] + " "; // Concatenate words with spaces
+                            tmpEventMsgStr2 += words[i] + " "; // Concatenate words with spaces
                         }
-
                         i++;
-
                         // Check if we've reached the end of the array
                         if (i >= words.Length)
                         {
                             //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]} REACHED THE END");
                             break;
                         }
-                    }
-
-
-                    if (msgDict.TryGetValue(("EventMsg"), out curVal))
+                    }//while
+                    if (tmpEventMsgStr2.Length > 50)
                     {
-                        msgDict["EventMsg"] = curVal + tmpStr2;
+                        tmpEventMsgStr2 = tmpEventMsgStr2.Substring(0, 40);
+                        Console.WriteLine($"EventMsg:{tmpEventMsgStr2}");
                     }
-                    else
+                    if (!msgDict.ContainsKey("EventMsg"))
                     {
-                        msgDict.Add("EventMsg", tmpStr2);
+                        msgDict["EventMsg"] = tmpEventMsgStr2;
                     }
-
-                    Console.WriteLine($">>>Added EventMsg: {tmpStr1 + " " + tmpStr2}"); ;
+                    Console.WriteLine($">>>Added EventMsg: {tmpStr1 + " " + tmpEventMsgStr2}"); ;
                     //i++;
                 }//EventMsg:
-
-
-
-
-
-                //EventMSG 1c
-                else if (words[i] == "Successfully")
-                {   //When "EventMsg:" is missing from the EvenMsg, we add it, so this check must always be after chk for "EventMsg" so we don't duplicate
-                    //Console.WriteLine($"Matched Successfully");
-                    //Console.ReadLine();
-                    string tmpStr1 = words[i];
-                    string tmpStr2 = "";
-
-
-                    while (i < words.Length)
-                    {
-                        if (words[i].Contains('.'))
-                        {
-                            tmpStr2 += words[i]; // Include the word with the period
-                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Last Word:{words[i]}");
-                            break; // Exit the loop when a period is encountered
-                        }
-                        else
-                        {
-                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]}");
-                            tmpStr2 += words[i] + " "; // Concatenate words with spaces
-                        }
-
-                        i++;
-
-                        // Check if we've reached the end of the array
-                        if (i >= words.Length)
-                        {
-                            //Console.WriteLine($"i:{i}, WrdLen:{words.Length}, Current Word:{words[i]} REACHED THE END");
-                            break;
-                        }
-                    }
-
-
-                    Console.WriteLine($">>>Added EventMsg: {tmpStr1 + " " + tmpStr2}");
-                    //i++;
-                }//EventMsg "Succesfully"
-
 
 
 
@@ -230,10 +179,6 @@ namespace NOGAste
 
 
 
-
-
-
-
                 //Account Name/3
                 else if (words[i] == "Account" && words[i + 1] == "Name:"  &&  (words[i + 2] != "New" || words[i + 2] != "Account")   ) 
                 {
@@ -247,8 +192,8 @@ namespace NOGAste
                         if (!msgDict.ContainsKey("UserID") )
                         { 
                                 msgDict.Add("UserID", words[i + 2]);
-                                Console.WriteLine($"Field Name Valid:{words[i + 2]}");
-                                Console.WriteLine($"Words:{message}");
+                                //Console.WriteLine($"Field Name Valid:{words[i + 2]}");
+                                //Console.WriteLine($"Words:{message}");
                                 //Console.ReadLine();
                         }
 
@@ -265,7 +210,7 @@ namespace NOGAste
                     }//end catch
 
                     
-                    Console.WriteLine($"Event Logs Attempted: {numRecords}, UserID Success:{numAcctNameSuccess}, UserID Fail:{numAcctNameFail} ");
+                    //Console.WriteLine($"Event Logs Attempted: {numRecords}, UserID Success:{numAcctNameSuccess}, UserID Fail:{numAcctNameFail} ");
 
                 }//Account Name:/3
 
@@ -448,17 +393,14 @@ namespace NOGAste
 
 
 
-
-
-
-
-                //New Process Name/9
-                else if (words[i] == "New" && words[i + 1] == "Process" && words[i + 2] == "Name:" && words[i + 2].Contains("C:\\") )
+                //zzz
+                //New Process Name/9    New Process Name: C:\Sales\forecast.exe
+                else if (words[i] == "New" && words[i + 1] == "Process" && words[i + 2] == "Name:" && words[i + 3].Contains("C:"))
                 {
                     //Console.WriteLine($"Matched New Process Name:");
                     //Console.ReadLine();
-                    msgDict.Add("NewProcessName", words[i + 3]);
-                    Console.WriteLine($">>>Added NewProcessName: {words[i + 2] + " " + words[i + 3]}");
+                    msgDict.Add("ProgramRun", words[i + 3]);
+                    Console.WriteLine($">>>Added ProgramRun: {words[i + 3]}");
                     i += 3;
                 }//New Process Name:/9
 
@@ -467,31 +409,67 @@ namespace NOGAste
 
 
 
+                //zzz
+                //Process Command/10     Process Command Line: C:\Windows\System32\notepad.exe c:\sys\junk.txt
+                //else if (words[i] == "Process" && words[i + 1] == "Command" && words[i + 2] == "Line" && words[i + 3].Trim().Contains("C:", StringComparison.OrdinalIgnoreCase))
+                //else if (i+3 < words.Length )
+                //{
+                //   if (words[i] == "Process" && words[i + 1] == "Command" && words[i + 2] == "Line:" && words[i + 3].Contains("C:"))
+                //    {
+                //            //Console.WriteLine($"Matched Process Command Line:");
+                //            //Console.ReadLine();
+                //            msgDict.Add("CommandRun", words[i + 3]);
+                //            //Console.WriteLine($">>>Added Process Command Line: {words[i + 3] }");
+                //            Console.WriteLine($">>>Added CommandRun: {words[i + 3]}");
+                //            i += 3;
+                //    }//if
+                //    //Console.ReadLine();
+                //}//Processs Command Line:/10
 
-                //Process Command/10
-                else if (words[i] == "Process" && words[i + 1] == "Command") // && words[i + 2] == "Line:")
+
+
+
+
+                //zzz
+                //Process Information/15    Process Information: C:\users\jbridges\sales.exe
+                //else if (words[i] == "Process" && words[i + 1] == "Information:" && words[i + 2].Trim().Contains("C:", StringComparison.OrdinalIgnoreCase))
+                else if (words[i] == "Process" && words[i + 1] == "Information:" && words[i + 2].Contains("C:"))
                 {
-                    try
-                    {
-                        //Console.WriteLine($"Matched Process Command Line:");
-                        //Console.ReadLine();
-                        msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]);
-                        msgDict.Add("ProcessCmdLine", words[i + 3]);
-                        //Console.WriteLine($">>>Added Process Command Line: {words[i] + " " + words[i + 1] + " " + words[i + 2] + " " + words[i + 3]}");
-                        Console.WriteLine($">>>Added ProcessCmdLine: {words[i + 3]}");
-                        i += 3;
-
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Field Fail: ProcessCmdLine......");
-                    }
-
+                    //Console.WriteLine($"Matched Process Information");
                     //Console.ReadLine();
-                }//Processs Command Line:/10
+                    msgDict.Add("ProcessInfo", words[i + 2]);
+                    Console.WriteLine($">>>Added ProcessInfo: {words[i + 2]}");
+                    i += 2;
+                }//Sub Status:15
 
 
 
+                //zzz
+                //Object Name/16    Object Name: C:\Legal\contracts\Expansion.txt
+                //else if  (words[i] == "Object" && words[i + 1] == "Name:" && words[i + 2].Trim().Contains("C:", StringComparison.OrdinalIgnoreCase))
+                else if (words[i] == "Object" && words[i + 1] == "Name:" && words[i + 2].Contains("C:"))
+                        {
+                    //Console.WriteLine($"Matched Process Information");
+                    //Console.ReadLine();
+                    msgDict.Add("ObjName", words[i + 2]);
+                    Console.WriteLine($">>>Added ObjName:  {words[i + 2]}");
+                    i += 2;
+                }//ObjectName:16
+
+
+
+
+                //zzz
+                //Application Info/17    Application Path: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+                //else if (words[i] == "Application" && words[i + 1] == "Path:" && words[i + 2].Trim().Contains("C:", StringComparison.OrdinalIgnoreCase))
+                else if (words[i] == "Application" && words[i + 1] == "Path:" && words[i + 2].Contains("C:"))
+                {
+                    //Console.WriteLine($"Matched Process Information");
+                    //Console.ReadLine();
+                    msgDict.Add("AppPath", words[i + 2]);
+                    Console.WriteLine($">>>Added AppPath: {words[i + 2]}");
+                    i += 2;
+                }//AppPath:17
 
 
 
@@ -580,13 +558,8 @@ namespace NOGAste
 
 
 
-
-
-
-
-
                 //Status/13
-                else if (words[i] == "Status:" && words[i + 1].Contains("0x"))
+                else if (words[i] == "Status:" && words[i + 1].Contains("0x", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.WriteLine($"Matched Status");
                     //Console.ReadLine();
@@ -600,7 +573,7 @@ namespace NOGAste
 
 
                 //Sub Status/14
-                else if (words[i] == "Sub" && words[i + 1] == "Status:" && words[i + 2].Contains("0x"))
+                else if (words[i] == "Sub" && words[i + 1] == "Status:" && words[i + 2].Contains("0x", StringComparison.OrdinalIgnoreCase))
                 {
                     //Console.WriteLine($"Matched SubStatus");
                     //Console.ReadLine();
@@ -613,32 +586,6 @@ namespace NOGAste
 
 
 
-                //Process Information/15
-                else if (words[i] == "Process" && words[i + 1] == "Information:" && words[i + 2].Contains("C:\\"))
-                {
-                    //Console.WriteLine($"Matched Process Information");
-                    //Console.ReadLine();
-                    msgDict.Add("ProcessInfo", words[i + 2]);
-                    Console.WriteLine($">>>Added ProcessInfo: {words[i + 2]}");
-                    i+=2;
-                }//Sub Status:15
-
-
-
-
-
-                //Process Information/16
-                else if (words[i] == "Object" && words[i + 1] == "Name:" && words[i + 2].Contains("C:\\"))
-                {
-                    //Console.WriteLine($"Matched Process Information");
-                    //Console.ReadLine();
-                    msgDict.Add("ObjectName", words[i + 2]);
-                    Console.WriteLine($">>>Added ObjectName:  {words[i + 2]}");
-                    i +=2;
-                }//Sub Status:16
-
-
-
 
 
                 //Reason/17
@@ -646,8 +593,8 @@ namespace NOGAste
                 {
                     //Console.WriteLine($"Matched Reason:");
                     //Console.ReadLine();
-                    msgDict.Add("Reason", words[i + 1]);
-                    Console.WriteLine($">>>AddedReason: {words[i + 1]}");
+                    msgDict.Add("ReasonEvnt", words[i + 1]);
+                    Console.WriteLine($">>>Added ReasonEvnt: {words[i + 1]}");
                     //Console.ReadLine() ;
                     i++;
                 }//Reason:/17

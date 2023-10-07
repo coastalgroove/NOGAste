@@ -135,7 +135,9 @@ namespace NOGAste
                         string FailReason     = "";
                         string ProgramRun     = "";
                         string CommandRun     = "";
-                        string FileAccess     = "";
+                        string ProcessInfo    = "";
+                        string ObjName        = "";
+                        string AppPath        = "";
                         string LogLvl         = "";
                         string Status         = "";
                         string SubStatus      = "";
@@ -158,7 +160,9 @@ namespace NOGAste
                             UserID,
                             ProgramRun,
                             CommandRun,
-                            FileAccess,
+                            ProcessInfo,
+                            ObjName,
+                            AppPath,
                             LogLvl,
                             Status,
                             SubStatus,
@@ -205,11 +209,55 @@ namespace NOGAste
                         //Console.ReadLine();
 
 
+                        //EventID Already Defined from LogEntry
 
-                        if (msgDict.ContainsKey("UserID"))
+                        if (msgDict.ContainsKey("EventMsg"))
+                         {
+                            //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
+                            logEntry.EventMsg = msgDict["EventMsg"]; //.Substring(0,50);
+                            //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
+                            //Console.ReadLine();
+                        }
+                        if (msgDict.ContainsKey("LogonType"))
                         {
                             //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
-                            logEntry.UserID = msgDict["UserID"];
+                            logEntry.LogonType = msgDict["LogonType"];
+                            //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
+                            //Console.ReadLine();
+                        }
+                        if (msgDict.ContainsKey("ElevToken"))
+                        {
+                            //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
+                            logEntry.ElevToken = msgDict["ElevToken"];
+                            //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
+                            //Console.ReadLine();
+                        }
+                        if (msgDict.ContainsKey("ImpersonateLvl"))
+                        {
+                            //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
+                            logEntry.ImpersonateLvl = msgDict["ImpersonateLvl"];
+                            //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
+                            //Console.ReadLine();
+                        }
+                        if (msgDict.ContainsKey("LogonFail"))
+                        {
+                            //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
+                            logEntry.LogonFail = msgDict["LogonFail"];
+                            //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
+                            //Console.ReadLine();
+                        }
+                        if (msgDict.ContainsKey("FailInfo"))
+                        {
+                            //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
+                            logEntry.FailInfo = msgDict["FailInfo"];
+                            //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
+                            //Console.ReadLine();
+                        }
+
+                        if (msgDict.ContainsKey("FailIReason"))
+                        {
+                            //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
+                            logEntry.FailReason = msgDict["FailReason"];
                             //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
                             //Console.ReadLine();
                         }
@@ -220,14 +268,79 @@ namespace NOGAste
                             //Console.WriteLine($"AFTER:  MachineName:{msgDict["MachineName"]} ");
                             //Console.ReadLine();
                         }
-
-                        if (msgDict.ContainsKey("FailReason"))
+                        if (msgDict.ContainsKey("UserID"))
+                        {
+                            //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
+                            logEntry.UserID = msgDict["UserID"];
+                            //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
+                            //Console.ReadLine();
+                        }
+                        if (msgDict.ContainsKey("ProgramRun"))
+                        {
+                            //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
+                            logEntry.ProgramRun = msgDict["ProgramRun"];
+                            //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
+                            //Console.ReadLine();
+                        }
+                        if (msgDict.ContainsKey("CommandRun"))
                         {
                             //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
-                            logEntry.UserID = msgDict["FailReason"];
+                            logEntry.CommandRun = msgDict["CommandRun"];
                             //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
                             //Console.ReadLine();
                         }
+                        if (msgDict.ContainsKey("ProcessInfo"))
+                        {
+                            //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
+                            logEntry.ProcessInfo = msgDict["ProcessInfo"];
+                            //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
+                            //Console.ReadLine();
+                        }
+                        if (msgDict.ContainsKey("ObjName"))
+                        {
+                            //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
+                            logEntry.ObjName = msgDict["ObjName"];
+                            //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
+                            //Console.ReadLine();
+                        }
+                        if (msgDict.ContainsKey("AppPath"))
+                        {
+                            //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
+                            logEntry.AppPath = msgDict["AppPath"];
+                            //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
+                            //Console.ReadLine();
+                        }
+                        if (msgDict.ContainsKey("LogLvl"))
+                        {
+                            //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
+                            logEntry.LogLvl = msgDict["LogLvl"];
+                            //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
+                            //Console.ReadLine();
+                        }
+                        if (msgDict.ContainsKey("Status"))
+                        {
+                            //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
+                            logEntry.Status = msgDict["Status"];
+                            //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
+                            //Console.ReadLine();
+                        }
+                        if (msgDict.ContainsKey("SubStatus"))
+                        {
+                            //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
+                            logEntry.SubStatus = msgDict["SubStatus"];
+                            //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
+                            //Console.ReadLine();
+                        }
+                        if (msgDict.ContainsKey("ReasonEvnt"))
+                        {
+                            //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
+                            logEntry.ReasonEvnt = msgDict["ReasonEvnt"];
+                            //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
+                            //Console.ReadLine();
+                        }
+
+
+
 
                         //Intance of class "Events"
                         var eventInstance = new Events  //(EventID, TimeCreated, MachineName, UserID);
@@ -247,11 +360,13 @@ namespace NOGAste
                             UserID         = logEntry.UserID,
                             ProgramRun     = logEntry.ProgramRun,
                             CommandRun     = logEntry.CommandRun,
-                            FileAccess     = logEntry.FileAccess,
+                            ProcessInfo    = logEntry.ProcessInfo,
+                            ObjName        = logEntry.ObjName,
+                            AppPath        = logEntry.AppPath,
                             LogLvl         = logEntry.LogLvl,
                             Status         = logEntry.Status,
                             SubStatus      = logEntry.SubStatus,
-                            Reason         = logEntry.Reason
+                            ReasonEvnt     = logEntry.ReasonEvnt
                             //ThreatEval     = logEntry.ThreatEval,
                             //ActionReqd     = logEntry.ActionReqd,
                         };
@@ -262,20 +377,35 @@ namespace NOGAste
                         var eventsRepo = new DapperEventsRepository(conn);
                         int j = 0;
                         int k = 0;
-                        foreach (var item in eventLogEntries)
+                       foreach (var item in eventLogEntries)
                         {
-                            Console.WriteLine($"Event:{j} -----EventLogEntries------");
-                            Console.WriteLine($"EventID:{item.EventID}");
-                            Console.WriteLine($"UserID:{item.UserID}");
-                            Console.WriteLine($"ProgramRun:{item.ProgramRun}");
-                            Console.WriteLine($"CommandRun:{item.CommandRun}");
-                            Console.WriteLine($"FileAccess:{item.FileAccess}");
+                            Console.WriteLine($"Event: {j} -----Fields------");
+                            Console.WriteLine($"EventID: {logEntry.EventID}");
+                            Console.WriteLine($"TimeCreated: {logEntry.TimeCreated}");
+                            Console.WriteLine($"EventMsg: {item.EventMsg}");
+                            Console.WriteLine($"LogonType: {item.LogonType}");
+                            Console.WriteLine($"ElevToken: {item.ElevToken}");
+                            Console.WriteLine($"ImpersonationLvl: {item.ImpersonateLvl}");
+                            Console.WriteLine($"LogonFail: {item.LogonFail}");
+                            Console.WriteLine($"FailInfo: {item.FailInfo}");
+                            Console.WriteLine($"FailReason: {item.FailReason}");
+                            Console.WriteLine($"MachineName: {item.MachineName}");
+                            Console.WriteLine($"UserID: {item.UserID}");
+                            Console.WriteLine($"ProgramRun: {item.ProgramRun}");
+                            Console.WriteLine($"CommandRun: {item.CommandRun}");
+                            Console.WriteLine($"ProcessInfo: {item.ProcessInfo}");
+                            Console.WriteLine($"ObjName: {item.ObjName}");
+                            Console.WriteLine($"AppPath: {item.AppPath}");
+                            Console.WriteLine($"LogLvl: {item.LogLvl}");
+                            Console.WriteLine($"Status: {item.Status}");
+                            Console.WriteLine($"SubStatus: {item.SubStatus}");
+                            Console.WriteLine($"ReasonEvnt: {item.ReasonEvnt}");
                             Console.ReadLine();
                             j++;
                         }//out foreach
                         //Insert into DB
                         eventsRepo.InsertEvents(eventInstance);
-                        //Console.ReadLine() ;
+                        Console.ReadLine() ;
                         csvField++;
                         //}
                     }//if

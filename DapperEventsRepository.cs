@@ -33,13 +33,14 @@ namespace NOGAste
             //safely pass in parameters
             _conn.Execute("INSERT INTO Events" +
                           " (EventID, TimeCreated,  EventMsg, LogonType, ElevToken, " +
-                          " ImpersonateLvl, LogonFail, FailInfo, FailReason, MachineName, UserID," +
-                          " ProgramRun, CommandRun, FileAccess, LogLvl, Status, SubStatus, Reason)  " +
+                          " ImpersonateLvl, LogonFail, FailInfo, FailReason, MachineName, " +
+                          " UserID, ProgramRun, CommandRun, ProcessInfo, ObjName, AppPath, " +
+                          " LogLvl, Status, SubStatus, ReasonEvnt)  " +
                           " VALUES " +
                           " (@EventID, @TimeCreated, @EVentMsg, @LogonType, @ElevToken, " +
                           " @ImpersonateLvl, @LogonFail, @FailInfo, @FailReason, @MachineName, " +
-                          " @UserID, @ProgramRun, @CommandRun, @FileAccess, @LogLvl, @Status, " +
-                          " @SubStatus, @Reason)",
+                          " @UserID, @ProgramRun, @CommandRun, @ProcessInfo, @ObjName, @AppPath, " +
+                          " @LogLvl, @Status, @SubStatus, @ReasonEvnt)",
                           new {
                               eventID        = events.EventID,
                               timeCreated    = events.TimeCreated,
@@ -54,13 +55,15 @@ namespace NOGAste
                               userID         = events.UserID,
                               programRun     = events.ProgramRun,
                               commandRun     = events.CommandRun,
-                              fileAccess     = events.FileAccess,
+                              processInfo    = events.ProcessInfo,
+                              objName        = events.ObjName,
+                              appPath        = events.AppPath,
                               logLvl         = events.LogLvl,
                               status         = events.Status,
                               subStatus      = events.SubStatus,
-                              reason         = events.Reason,
+                              reasonEvnt     = events.ReasonEvnt,
 
-                          });
+                          }); ;
              }
         //afterHours     = events.AfterHours,
         //logonSuccess   = events.LogonSuccess,

@@ -38,11 +38,13 @@ namespace NOGAste
         public string UserID { get; set; }
         public string ProgramRun { get; set; }
         public string CommandRun { get; set; }
-        public string FileAccess { get; set; }
+        public string ProcessInfo { get; set; }
+        public string ObjName { get; set; }
+        public string AppPath { get; set; }
         public string LogLvl { get; set; }
         public string Status { get; set; }
         public string SubStatus { get; set; }
-        public string Reason { get; set; }
+        public string ReasonEvnt { get; set; }
 
         //public string   ThreatEval     {  get; set; }
         //public string   ActionReqd     {  get; set; }
@@ -63,11 +65,13 @@ namespace NOGAste
                string userID,
                string programRun,
                string commandRun,
-               string fileAccess,
+               string processInfo,
+               string objName,
+               string appPath,
                string logLvl,
                string status,
                string subStatus,
-               string reason)
+               string reasonEvnt)
         //string   afterHours,
         //string   logonSuccess,
         //string   threatEval,
@@ -90,11 +94,13 @@ namespace NOGAste
             UserID         = userID;
             ProgramRun     = programRun;
             CommandRun     = commandRun;
-            FileAccess     = fileAccess;
+            ProcessInfo    = processInfo;
+            ObjName        = objName;
+            AppPath        = appPath;
             LogLvl         = logLvl;
             Status         = status;
             SubStatus      = subStatus;
-            Reason         = reason;
+            ReasonEvnt     = reasonEvnt;
 
         }//End method Body of EventLogCSVImport Constructor
 

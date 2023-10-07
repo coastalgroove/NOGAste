@@ -28,11 +28,13 @@ namespace NOGAste
         public string UserID         { get; set; }
         public string ProgramRun     { get; set; }
         public string CommandRun     { get; set; }
-        public string FileAccess     { get; set; }
+        public string ProcessInfo    { get; set; }
+        public string ObjName        { get; set; }
+        public string AppPath        { get; set; }
         public string LogLvl         { get; set; }
         public string Status         { get; set; }
         public string SubStatus      { get; set; }
-        public string Reason         { get; set; }
+        public string ReasonEvnt     { get; set; }
         //public string   ThreatEval     {  get; set; }
         //public string   ActionReqd     {  get; set; }
 
