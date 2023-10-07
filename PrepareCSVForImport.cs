@@ -254,7 +254,7 @@ namespace NOGAste
                             //Console.ReadLine();
                         }
 
-                        if (msgDict.ContainsKey("FailIReason"))
+                        if (msgDict.ContainsKey("FailReason"))
                         {
                             //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
                             logEntry.FailReason = msgDict["FailReason"];
@@ -400,12 +400,12 @@ namespace NOGAste
                             Console.WriteLine($"Status: {item.Status}");
                             Console.WriteLine($"SubStatus: {item.SubStatus}");
                             Console.WriteLine($"ReasonEvnt: {item.ReasonEvnt}");
-                            Console.ReadLine();
+                            //Console.ReadLine();
                             j++;
                         }//out foreach
                         //Insert into DB
                         eventsRepo.InsertEvents(eventInstance);
-                        Console.ReadLine() ;
+                        //Console.ReadLine() ;
                         csvField++;
                         //}
                     }//if
