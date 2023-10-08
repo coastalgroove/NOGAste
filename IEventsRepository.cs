@@ -18,14 +18,14 @@ namespace NOGAste
     public interface IEventsRepository
     {
 
-        //GetEvents and InsertEvents are "stubbed out methods"
+        //GetAllEvents and InsertEvents are "stubbed out methods"
 
         //This is a method declaration with a return type of
         //of IEnumerable<Events>  (Events. IEnumerable<T>)
         //When you want to retrieve a list of events from an
         //object that implements the IEventsRepository
         //interface, you would call this method.
-        IEnumerable<Events> GetEvents();
+        IEnumerable<Events> GetAllEvents();
 
 
         //Stubbed out method 

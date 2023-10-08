@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace NOGAste
 {
-    internal class DapperEventsRepository : IEventsRepository
+    public class DapperEventsRepository : IEventsRepository
     {
         private readonly IDbConnection _conn;
 
@@ -17,11 +17,22 @@ namespace NOGAste
             _conn = conn;
         }
 
-        //Implementation of method "GetEvents" from
+        //Implementation of method "GetAllEvents" from
         //Interface IEventsRepository
-        public IEnumerable<Events> GetEvents()
+        public IEnumerable<Events> GetAllEvents()
         {
-            return _conn.Query<Events>("SELECT * FROM Events");
+            return _conn.Query<Events>("SELECT * FROM events");
+        }
+
+
+        public IEnumerable<Events> GetMaliciousProgram()
+        {
+            return _conn.Query<Events>("SELECT * FROM securityLogs.events     " +
+                                       " WHERE CommandRun LIKE '%powershell%' " +
+                                       " OR ProcessInfo LIKE '%powershell%'   " +
+                                       " OR ObjName LIKE '%powershell%'       " +
+                                       " OR AppPath LIKE '%powershell%';      "
+                                       );
         }
 
 

@@ -63,7 +63,6 @@ namespace NOGAste
 
 
 
-
                 var config = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json")
