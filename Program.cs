@@ -52,12 +52,14 @@ namespace NOGAste
             }
             else if (userInput == "2") 
             {
-                PrepareEVTForImport.InsertEVT();
+                PrepareEVTForImport.InsertEVT("security");
+                Console.WriteLine("Must be running as ADMINISTRATOR");
+                Console.ReadLine();
             }
 
-            else if (userInput == "2")
+            else if (userInput == "3")
             {
-                PrepareEVTForImport.InsertEVT();
+                PrepareEVTForImport.InsertEVT("application");
             }
             Console.WriteLine("Processing Complete");
             Console.WriteLine("\n\n\n\n");

@@ -24,6 +24,16 @@ namespace NOGAste
             return _conn.Query<Events>("SELECT * FROM Events");
         }
 
+
+
+
+
+
+
+
+
+
+
         //Implementation of method "InsertEvents" from
         //Interface IEventsRepository
         public void InsertEvents(Events events)

@@ -27,7 +27,7 @@ namespace NOGAste
 {
     public static  class PrepareEVTForImport
     {
-        public static void InsertEVT()
+        public static void InsertEVT(string logName)
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -52,7 +52,7 @@ namespace NOGAste
             Command cmd = new Command("Get-WinEvent");
 
             //You can add parameters:
-            cmd.Parameters.Add("LogName", "security");
+            cmd.Parameters.Add("LogName", logName);
             //cmd.Parameters.Add("StartTime", "08:00");
             //cmd.Parameters.Add("EndTime", "09:00");
 
@@ -74,16 +74,16 @@ namespace NOGAste
             int exceptCnt = 0;
             foreach (PSObject psObject in output)
             {
-                //Console.WriteLine($"------------------------------------------ \n\n\n\n\n\n");
+                Console.WriteLine($"------------------------------------------ \n\n\n\n\n\n");
                 //Console.ReadLine();
-                //Console.WriteLine("Properties and Values:");
+                Console.WriteLine("Properties and Values:");
                 foreach (var property in psObject.Properties)
                 {
                     try
                     {
                         //Console.WriteLine($"-----------------------------------------\n");
-                        //Console.WriteLine($"INNER LOOP TOP\n");
-                        //Console.WriteLine($"Property:>{property.Name}< Value:>{property.Value}<");
+                        Console.WriteLine($"----------------INNER LOOP TOP---------------\n");
+                        Console.WriteLine($"Property:>{property.Name}< Value:>{property.Value}<");
                         //Console.ReadLine();
 
                         //zzz
@@ -91,16 +91,16 @@ namespace NOGAste
                         if ((property.Name).Trim() == "Id")
                         {
                            tmpEvtID = (property.Value).ToString();
-                           //Console.WriteLine($"EventID:{tmpEvtID}");
-                           //Console.WriteLine($"-----------------WE GOT A Id HIT!!!-------------****************--");
+                           Console.WriteLine($"EventID:{tmpEvtID}");
+                           Console.WriteLine($"-----------------WE GOT A   >>Id<<   HIT!!!-------------****************--");
                            //Console.ReadLine();
                         }
 
                         if ((property.Name).Trim() == "TimeCreated")
                         {
                            tmpTime = (property.Value).ToString();
-                            //Console.WriteLine($"TimeCreated:{tmpTime}");
-                            //Console.WriteLine($"-----------------WE GOT A TIME  HIT!!!-----------****************--");
+                            Console.WriteLine($"TimeCreated:{tmpTime}");
+                            Console.WriteLine($"-----------------WE GOT A   >>TIME<<<  HIT!!!-----------****************--");
                             //Console.ReadLine();
                         }
 
@@ -121,14 +121,14 @@ namespace NOGAste
                         if ((property.Name).Trim() == "MachineName")
                         {
                            tmpMachine = (property.Value).ToString();
-                            //Console.WriteLine($"MachineName:{tmpMachine}");
-                            //Console.WriteLine($"-----------------WE GOT A Machine HIT!!!--------****************--");
+                            Console.WriteLine($"MachineName:{tmpMachine}");
+                            Console.WriteLine($"-----------------WE GOT A Machine HIT!!!--------****************--");
                             //Console.ReadLine();
                         }
 
-                        //Console.WriteLine($"Property:>{property.Name}< Value:>{property.Value}<\n");
-                        //Console.WriteLine($"Ttl Properties:{innerCnt}, Fail:{exceptCnt}, Events:{outterCnt}\n");
-                        //Console.WriteLine("--------INNER LOOP BOTTOM------");
+                        Console.WriteLine($"Property:>{property.Name}< Value:>{property.Value}<\n");
+                        Console.WriteLine($"Ttl Properties:{innerCnt}, Fail:{exceptCnt}, Events:{outterCnt}\n");
+                        //Console.WriteLine("--------INNER LOOP BOTTOM------\n");
                         //Console.ReadLine();
                         innerCnt++;
                     }//End Try
@@ -136,7 +136,7 @@ namespace NOGAste
                     {
                         //Console.Write(ex.ToString());
                         exceptCnt++;
-                        //Console.Write($"TryCatch Ttl Properties:{innerCnt}, Fail:{exceptCnt}, Events:{outterCnt}, Unable to proces this event.......\n");
+                        Console.Write($"TryCatch Ttl Properties:{innerCnt}, Fail:{exceptCnt}, Events:{outterCnt}, Unable to proces this event.......\n");
                         //Console.ReadLine();
                     }
 

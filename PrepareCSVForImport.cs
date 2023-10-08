@@ -82,56 +82,54 @@ namespace NOGAste
                 while (!parser.EndOfData)
                 {
                     //define a string array that receives extracted each rows
-                    //with 27 columns (fields) into an array
-                    string[] fields = parser.ReadFields();
+                    //with 27 columns (stdEventFields) into an array
+                    string[] stdEventFields = parser.ReadFields();
 
                     //THESE PROPERTIES ARE STRICTLY MATCHING STANDARD EVT LOG
                     //FOR READING IN FROM CSV - WHICH MATCHES AN EVT
-                    if (fields.Length >= 27)  //this "if" doesn't really need to be here
+                    if (stdEventFields.Length >= 27)  //this "if" doesn't really need to be here
                     {   //These are variables that correlate to columns(named
                         //headers) in the .CSV file 
-                        string Message              = fields[0];
-                        string EventID              = fields[1];
-                        string Version              = fields[2];
-                        string Qualifiers           = fields[3];
-                        string Level                = fields[4];
-                        string Task                 = fields[5];
-                        string Opcode               = fields[6];
-                        string Keywords             = fields[7];
-                        string Recordid             = fields[8];
-                        string ProviderName         = fields[9];
+                        string Message              = stdEventFields[0];
+                        string EventID              = stdEventFields[1];  //Used in final eventInstance
+                        string Version              = stdEventFields[2];
+                        string Qualifiers           = stdEventFields[3];
+                        string Level                = stdEventFields[4];
+                        string Task                 = stdEventFields[5];
+                        string Opcode               = stdEventFields[6];
+                        string Keywords             = stdEventFields[7];
+                        string Recordid             = stdEventFields[8];
+                        string ProviderName         = stdEventFields[9];
 
-                        string ProviderID           = fields[10];
-                        string LogName              = fields[11];
-                        string ProcessID            = fields[12];
-                        string ThreadID             = fields[13];
-                        string MachineName          = fields[14];
-                        string UserID               = fields[15];
-                        string TimeCreated          = fields[16];
-                        string ActivityID           = fields[17];
-                        string RelatedActivity      = fields[18];
-                        string ContainerLog         = fields[19];
+                        string ProviderID           = stdEventFields[10];
+                        string LogName              = stdEventFields[11];
+                        string ProcessID            = stdEventFields[12];
+                        string ThreadID             = stdEventFields[13];
+                        string MachineName          = stdEventFields[14];
+                        string UserID               = stdEventFields[15];
+                        string TimeCreated          = stdEventFields[16];  //Used in final eventInstance
+                        string ActivityID           = stdEventFields[17];
+                        string RelatedActivity      = stdEventFields[18];
+                        string ContainerLog         = stdEventFields[19];
 
-                        string MatchedQueryIDs      = fields[20];
-                        string Bookmark             = fields[21];
-                        string LevelDisplayName     = fields[22];
-                        string OpcodeDisplayName    = fields[23];
-                        string TaskDisplayName      = fields[24];
-                        string KeywordsDisplayNames = fields[25];
-                        string Properties           = fields[26];
+                        string MatchedQueryIDs      = stdEventFields[20];
+                        string Bookmark             = stdEventFields[21];
+                        string LevelDisplayName     = stdEventFields[22];
+                        string OpcodeDisplayName    = stdEventFields[23];
+                        string TaskDisplayName      = stdEventFields[24];
+                        string KeywordsDisplayNames = stdEventFields[25];
+                        string Properties           = stdEventFields[26];
 
 
-                        //I tried this but could not get it to work
-                        //EventLogEntry logEntry = new EventLogEntry()
 
-                        
-
+                        //BEGIN Custom Message Field Extraction
+                        //THESE ARE CUSTOM PROPERTIES MESSAGE FIELDS FOR DB INSERTION
                         string EventMsg       = "";
                         string LogonType      = "";
                         string ElevToken      = "";
                         string ImpersonateLvl = "";
                         string LogonFail      = "";
-                        string FailInfo       = "";
+                        string FailInfo       = "";     //not used
                         string FailReason     = "";
                         string ProgramRun     = "";
                         string CommandRun     = "";
@@ -141,18 +139,28 @@ namespace NOGAste
                         string LogLvl         = "";
                         string Status         = "";
                         string SubStatus      = "";
-                        string Reason         = "";
+                        string ReasonEvnt     = "";
 
-                        //So I created my own class EventLogCSVImport
-                        EventLogCSVImport logEntry = new EventLogCSVImport(
-                            EventID,
-                            TimeCreated,
-                            EventMsg,
+
+
+                        //****BEGIN SPLICE****
+                        //I want to extact this to its own method but to do so requires that
+                        //we pass the Message, EventID, TimeCreated fields and complete the
+                        //construction of the ENTIRE final Event instance externally and
+                        //pass that back.    Do NOT have time for that now.
+
+
+                        //Custom class for just for internal "Message" stdEventFields except for
+                        //EventID, TimeCreated which we get from the "Official" PSObject stdEventFields
+                        customMsgExtractDef customEventFields = new customMsgExtractDef(
+                            EventID,            //Already defined standard Log Values above
+                            TimeCreated,        //Already defined standard Log Values above
+                            EventMsg,           //All remaining fields get defined from Message internals
                             LogonType,
                             ElevToken,
                             ImpersonateLvl,
                             LogonFail,
-                            FailInfo,
+                            FailInfo,         //not used
                             FailReason,
                             //public string   AfterHours,
                             //public string   LogonSuccess,
@@ -166,21 +174,21 @@ namespace NOGAste
                             LogLvl,
                             Status,
                             SubStatus,
-                            Reason
+                            ReasonEvnt
                                      );
 
 
-                        //List<EventLogEntry> eventLogEntries = new List<EventLogEntry>();
-                        List<EventLogCSVImport> eventLogEntries = new List<EventLogCSVImport>();
+                        //List<EventLogEntry> customEventLogEntries = new List<EventLogEntry>();
+                        List<customMsgExtractDef> customEventLogEntries = new List<customMsgExtractDef>();
 
 
 
                         //========================================
-                        //NOTE: At this point "eventLogEntries" object is has all the LogEvent Properties
+                        //NOTE: At this point "customEventLogEntries" object has all the LogEvent Properties
                         //for ONE event.
-                        //I need to ADD additional field EXTRACTED using 
+                        //I need to ADD additional fields EXTRACTED using 
                         //"StringExtractionTools which creates, returns a DICTIONARY 
-                        //with extra fields I need to add to "eventLogEntries" object
+                        //with extra custom EventFields
 
                         //Remember we are in a "while" loop, processing one
                         //"row" i.e. "Event" at a time.
@@ -188,19 +196,19 @@ namespace NOGAste
                         //the event MSG here.  
 
                         //Uncomment these two lines to see the raw message
-                        //Console.WriteLine($"Log Message: {logEntry.Message}");
+                        //Console.WriteLine($"Log Message: {customEventFields.Message}");
                         //Console.ReadLine();
 
 
-                        //This converts a monoloithic msg text to distinct fields and values (best try)
+                        //This returns a dictionary of CUSTOM fields extracted from the standard
+                        //Event "message" field (a large text blob of varying size and content
+                        //with some internal "markers" REPEATED increasing the difficulty of
+                        //field identifcation and extraction
                         Dictionary<string, string> msgDict = new Dictionary<string, string>();
                         msgDict = StringExtractionTools.convertMsgToFields(Message);
 
-                        //NOW, access the extra fields from "msgDict" and UPDATE "logEntry"
-                        //before its added to "eventLogEntries"
-
-                       
-
+                        //NOW, access the extra stdEventFields from "msgDict" and UPDATE "customEventFields"
+                        //before its added to "customEventLogEntries"
                         for (int i = 0; i < msgDict.Count; i++)
                         {
                             //Console.WriteLine($"Key: {msgDict.ElementAt(i).Key},  Value: {msgDict.ElementAt(i).Value} ");
@@ -209,47 +217,47 @@ namespace NOGAste
                         //Console.ReadLine();
 
 
-                        //EventID Already Defined from LogEntry
+                        //"EventID" and "TimeCreated" Already Defined from LogEntry
 
                         if (msgDict.ContainsKey("EventMsg"))
                          {
                             //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
-                            logEntry.EventMsg = msgDict["EventMsg"]; //.Substring(0,50);
+                            customEventFields.EventMsg = msgDict["EventMsg"]; //.Substring(0,50);
                             //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("LogonType"))
                         {
                             //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
-                            logEntry.LogonType = msgDict["LogonType"];
+                            customEventFields.LogonType = msgDict["LogonType"];
                             //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("ElevToken"))
                         {
                             //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
-                            logEntry.ElevToken = msgDict["ElevToken"];
+                            customEventFields.ElevToken = msgDict["ElevToken"];
                             //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("ImpersonateLvl"))
                         {
                             //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
-                            logEntry.ImpersonateLvl = msgDict["ImpersonateLvl"];
+                            customEventFields.ImpersonateLvl = msgDict["ImpersonateLvl"];
                             //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("LogonFail"))
                         {
                             //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
-                            logEntry.LogonFail = msgDict["LogonFail"];
+                            customEventFields.LogonFail = msgDict["LogonFail"];
                             //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("FailInfo"))
                         {
                             //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
-                            logEntry.FailInfo = msgDict["FailInfo"];
+                            customEventFields.FailInfo = msgDict["FailInfo"];
                             //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
                             //Console.ReadLine();
                         }
@@ -257,137 +265,139 @@ namespace NOGAste
                         if (msgDict.ContainsKey("FailReason"))
                         {
                             //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
-                            logEntry.FailReason = msgDict["FailReason"];
+                            customEventFields.FailReason = msgDict["FailReason"];
                             //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("MachineName"))
                         {
                             //Console.WriteLine($"BEFORE: MachineName:{msgDict["MachineName"]} ");
-                            logEntry.MachineName = msgDict["MachineName"];
+                            customEventFields.MachineName = msgDict["MachineName"];
                             //Console.WriteLine($"AFTER:  MachineName:{msgDict["MachineName"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("UserID"))
                         {
                             //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
-                            logEntry.UserID = msgDict["UserID"];
+                            customEventFields.UserID = msgDict["UserID"];
                             //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("ProgramRun"))
                         {
                             //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
-                            logEntry.ProgramRun = msgDict["ProgramRun"];
+                            customEventFields.ProgramRun = msgDict["ProgramRun"];
                             //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("CommandRun"))
                         {
                             //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
-                            logEntry.CommandRun = msgDict["CommandRun"];
+                            customEventFields.CommandRun = msgDict["CommandRun"];
                             //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("ProcessInfo"))
                         {
                             //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
-                            logEntry.ProcessInfo = msgDict["ProcessInfo"];
+                            customEventFields.ProcessInfo = msgDict["ProcessInfo"];
                             //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("ObjName"))
                         {
                             //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
-                            logEntry.ObjName = msgDict["ObjName"];
+                            customEventFields.ObjName = msgDict["ObjName"];
                             //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("AppPath"))
                         {
                             //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
-                            logEntry.AppPath = msgDict["AppPath"];
+                            customEventFields.AppPath = msgDict["AppPath"];
                             //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("LogLvl"))
                         {
                             //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
-                            logEntry.LogLvl = msgDict["LogLvl"];
+                            customEventFields.LogLvl = msgDict["LogLvl"];
                             //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("Status"))
                         {
                             //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
-                            logEntry.Status = msgDict["Status"];
+                            customEventFields.Status = msgDict["Status"];
                             //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("SubStatus"))
                         {
                             //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
-                            logEntry.SubStatus = msgDict["SubStatus"];
+                            customEventFields.SubStatus = msgDict["SubStatus"];
                             //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
                             //Console.ReadLine();
                         }
                         if (msgDict.ContainsKey("ReasonEvnt"))
                         {
                             //Console.WriteLine($"BEFORE: FailReason:{msgDict["FailReason"]} ");
-                            logEntry.ReasonEvnt = msgDict["ReasonEvnt"];
+                            customEventFields.ReasonEvnt = msgDict["ReasonEvnt"];
                             //Console.WriteLine($"AFTER:  FailReason:{msgDict["FailReason"]} ");
                             //Console.ReadLine();
                         }
-
+                        //****END SPLICE****
 
 
 
                         //Intance of class "Events"
                         var eventInstance = new Events  //(EventID, TimeCreated, MachineName, UserID);
                         {
-                            EventID        = logEntry.EventID,
-                            TimeCreated    = logEntry.TimeCreated,
-                            EventMsg       = logEntry.EventMsg,
-                            LogonType      = logEntry.LogonType,
-                            ElevToken      = logEntry.ElevToken,
-                            ImpersonateLvl = logEntry.ImpersonateLvl,
-                            LogonFail      = logEntry.LogonFail,
-                            FailInfo       = logEntry.FailInfo,
-                            FailReason     = logEntry.FailReason,
-                            //AfterHours     = logEntry.AfterHours,
-                            //LogonSuccess   = logEntry.LogonSuccess,
-                            MachineName    = logEntry.MachineName,
-                            UserID         = logEntry.UserID,
-                            ProgramRun     = logEntry.ProgramRun,
-                            CommandRun     = logEntry.CommandRun,
-                            ProcessInfo    = logEntry.ProcessInfo,
-                            ObjName        = logEntry.ObjName,
-                            AppPath        = logEntry.AppPath,
-                            LogLvl         = logEntry.LogLvl,
-                            Status         = logEntry.Status,
-                            SubStatus      = logEntry.SubStatus,
-                            ReasonEvnt     = logEntry.ReasonEvnt
-                            //ThreatEval     = logEntry.ThreatEval,
-                            //ActionReqd     = logEntry.ActionReqd,
+                            EventID        = customEventFields.EventID,
+                            TimeCreated    = customEventFields.TimeCreated,
+                            EventMsg       = customEventFields.EventMsg,
+                            LogonType      = customEventFields.LogonType,
+                            ElevToken      = customEventFields.ElevToken,
+                            ImpersonateLvl = customEventFields.ImpersonateLvl,
+                            LogonFail      = customEventFields.LogonFail,
+                            FailInfo       = customEventFields.FailInfo,      //not used
+                            FailReason     = customEventFields.FailReason,
+                            //AfterHours     = customEventFields.AfterHours,
+                            //LogonSuccess   = customEventFields.LogonSuccess,
+                            MachineName    = customEventFields.MachineName,
+                            UserID         = customEventFields.UserID,
+                            ProgramRun     = customEventFields.ProgramRun,
+                            CommandRun     = customEventFields.CommandRun,
+                            ProcessInfo    = customEventFields.ProcessInfo,
+                            ObjName        = customEventFields.ObjName,
+                            AppPath        = customEventFields.AppPath,
+                            LogLvl         = customEventFields.LogLvl,
+                            Status         = customEventFields.Status,
+                            SubStatus      = customEventFields.SubStatus,
+                            ReasonEvnt     = customEventFields.ReasonEvnt
+                            //ThreatEval     = customEventFields.ThreatEval,
+                            //ActionReqd     = customEventFields.ActionReqd,
                         };
-                        //Adding the logEntry into the array "eventLogEntries"
+                        //Adding the customEventFields into the array "customEventLogEntries"
                         //Console.WriteLine($"Writing Event: {csvField} to Array, Total Events: {ttlEvents}");
-                        eventLogEntries.Add(logEntry);
+                        customEventLogEntries.Add(customEventFields);
+
+
 
                         var eventsRepo = new DapperEventsRepository(conn);
                         int j = 0;
                         int k = 0;
-                       foreach (var item in eventLogEntries)
+                       foreach (var item in customEventLogEntries)
                         {
                             Console.WriteLine($"Event: {j} -----Fields------");
-                            Console.WriteLine($"EventID: {logEntry.EventID}");
-                            Console.WriteLine($"TimeCreated: {logEntry.TimeCreated}");
+                            Console.WriteLine($"EventID: {customEventFields.EventID}");
+                            Console.WriteLine($"TimeCreated: {customEventFields.TimeCreated}");
                             Console.WriteLine($"EventMsg: {item.EventMsg}");
                             Console.WriteLine($"LogonType: {item.LogonType}");
                             Console.WriteLine($"ElevToken: {item.ElevToken}");
                             Console.WriteLine($"ImpersonationLvl: {item.ImpersonateLvl}");
                             Console.WriteLine($"LogonFail: {item.LogonFail}");
-                            Console.WriteLine($"FailInfo: {item.FailInfo}");
+                            Console.WriteLine($"FailInfo: {item.FailInfo}");        //not used
                             Console.WriteLine($"FailReason: {item.FailReason}");
                             Console.WriteLine($"MachineName: {item.MachineName}");
                             Console.WriteLine($"UserID: {item.UserID}");
