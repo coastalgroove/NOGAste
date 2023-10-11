@@ -148,12 +148,21 @@ namespace NOGAste
                             }
 
                             Console.WriteLine($">>>Added UserID: {words[i + 2]}");
-                            i += 2;
 
-                            if (words[i + 2] != "rootkit" && words[i + 2] != "hacker")
+
+                            if (words[i + 2].Trim() != "rootkit" && words[i + 2].Trim() != "hacker")
                             {
                                 msgDict.Add("KnownUser", "KNOWN");
+                                //Console.WriteLine($"KNOWN  UserID:>{words[i + 2].Trim()}<");
+                            
                             }
+                            else
+                            {
+                                //Console.WriteLine($"**********NOT KNOWN  UserID:>{words[i + 2].Trim()}<");
+                            }
+
+                            //Console.ReadLine();
+                            i += 2;
                         }
                         catch
                         {
