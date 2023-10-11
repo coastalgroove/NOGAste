@@ -139,7 +139,7 @@ namespace NOGAste
                         try
                         {
                             curVal = "";
-                            if (!msgDict.ContainsKey("UserID"))
+                            if (!msgDict.ContainsKey("UserID") && ( words[i + 2] != "S-1-5-18" || words[i + 2] != "S-1-5-21-110707328-881830710-1281915939-1001") )
                             {
                                 msgDict.Add("UserID", words[i + 2]);
                                 //Console.WriteLine($"Field Name Valid:{words[i + 2]}");
