@@ -36,7 +36,12 @@ namespace NOGAste
         }
 
 
-
+        public IEnumerable<Events> GetEvent()
+        {
+            return _conn.Query<Events>("SELECT KeyID,EventID,UserID,ThreatEval,ActionReqd " +
+                                       " FROM securityLogs.events  WHERE KeyID = 3 " 
+                                       );
+        }
 
 
 
@@ -54,14 +59,14 @@ namespace NOGAste
             //safely pass in parameters
             _conn.Execute("INSERT INTO Events" +
                           " (EventID, TimeCreated,  EventMsg, LogonType, ElevToken, " +
-                          " ImpersonateLvl, LogonFail, FailInfo, FailReason, MachineName, " +
+                          " ImpersonateLvl, LogonFail, KnownUser, FailReason, MachineName, " +
                           " UserID, ProgramRun, CommandRun, ProcessInfo, ObjName, AppPath, " +
-                          " LogLvl, Status, SubStatus, ReasonEvnt)  " +
+                          " LogLvl, Status, SubStatus, ReasonEvnt, ThreatEval, ActionReqd)  " +
                           " VALUES " +
                           " (@EventID, @TimeCreated, @EVentMsg, @LogonType, @ElevToken, " +
-                          " @ImpersonateLvl, @LogonFail, @FailInfo, @FailReason, @MachineName, " +
+                          " @ImpersonateLvl, @LogonFail, @KnownUser, @FailReason, @MachineName, " +
                           " @UserID, @ProgramRun, @CommandRun, @ProcessInfo, @ObjName, @AppPath, " +
-                          " @LogLvl, @Status, @SubStatus, @ReasonEvnt)",
+                          " @LogLvl, @Status, @SubStatus, @ReasonEvnt, @ThreatEval, @ActionReqd)",
                           new {
                               eventID        = events.EventID,
                               timeCreated    = events.TimeCreated,
@@ -70,10 +75,12 @@ namespace NOGAste
                               elevToken      = events.ElevToken,
                               impersonateLvl = events.ImpersonateLvl,
                               logonFail      = events.LogonFail,
-                              failInfo       = events.FailInfo,
+                              knownUser      = events.KnownUser,
                               failReason     = events.FailReason,
                               machineName    = events.MachineName,
-                              userID         = events.UserID,
+                              //afterHours     = events.AfterHours,
+                              //logonSuccess   = events.LogonSuccess,                              machineName    = events.MachineName,
+                              userID = events.UserID,
                               programRun     = events.ProgramRun,
                               commandRun     = events.CommandRun,
                               processInfo    = events.ProcessInfo,
@@ -83,13 +90,12 @@ namespace NOGAste
                               status         = events.Status,
                               subStatus      = events.SubStatus,
                               reasonEvnt     = events.ReasonEvnt,
-
+                              threatEval     = events.ThreatEval,
+                              actionReqd     = events.ActionReqd,
                           }); ;
              }
-        //afterHours     = events.AfterHours,
-        //logonSuccess   = events.LogonSuccess,
-        //threatEval     = events.ThreatEval,
-        //actionReqd     = events.ActionReqd,
+
+
 
     }//Class
 }//Namespace

@@ -45,15 +45,16 @@ namespace NOGAste
             Console.WriteLine("3. Select from active Application Log");
             Console.WriteLine("4. Print out entire DB Events");
             Console.WriteLine("5. Search for use of malicious program use");
+            Console.WriteLine("6. GetEvent by KeyID 3");
             Console.WriteLine("Select which event source to import ");
             string userInput = Console.ReadLine().Trim();
 
-            if (userInput  == "1")
+            if (userInput == "1")
             {
                 PrepareCSVForImport.ReadCSVFile();
 
             }
-            else if (userInput == "2") 
+            else if (userInput == "2")
             {
                 Console.WriteLine("Must be running as ADMINISTRATOR");
                 Console.ReadLine();
@@ -92,6 +93,8 @@ namespace NOGAste
                 Console.WriteLine($"{i} Events Retrieved");
             }
 
+
+            //-----------------------------------------------
             else if (userInput == "5")
             {
                 var config = new ConfigurationBuilder()
@@ -108,7 +111,7 @@ namespace NOGAste
                 var eventsRepo = new DapperEventsRepository(conn);
                 var events = eventsRepo.GetMaliciousProgram();
                 int i = 0;
-                foreach (var field in events)
+                foreach (Events field in events)
                 {
                     Console.WriteLine($"Nbr:{i}, ID: {field.EventID}, Time: {field.TimeCreated} UserID: {field.UserID}, Machine: {field.MachineName}, Program: {field.CommandRun}");
                     i++;
@@ -116,6 +119,32 @@ namespace NOGAste
                 Console.WriteLine($"{i} Events Retrieved");
             }
 
+
+
+            //-----------------------------------------------
+            else if (userInput == "6")
+            {
+                var config = new ConfigurationBuilder()
+                  .SetBasePath(Directory.GetCurrentDirectory())
+                  .AddJsonFile("appsettings.json")
+                  .Build();
+
+                string connString = config.GetConnectionString("DefaultConnection");
+
+                IDbConnection conn = new MySqlConnection(connString);
+
+                //=================================================
+
+                var eventsRepo = new DapperEventsRepository(conn);
+                var events = eventsRepo.GetEvent();
+
+                foreach (Events field in events)
+                {
+                    Console.WriteLine($"KeyID:{field.KeyID}, EventID: {field.EventID}, Time: {field.TimeCreated} UserID: {field.UserID}, Machine: {field.MachineName}, ThreatEval:{field.ThreatEval}, ActionReqd:{field.ActionReqd}");
+                }
+    
+
+            }//Else if 6
 
             Console.WriteLine("Processing Complete");
             Console.WriteLine("\n\n\n\n");

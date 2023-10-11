@@ -13,6 +13,7 @@ namespace NOGAste
 
         //Properties
         //THESE PROPERTIES ARE STRICTLY FOR DB WRITING
+        public int    KeyID          { get; set; }
         public string EventID        { get; set; }
         public string TimeCreated    { get; set; }
         public string EventMsg       { get; set; }
@@ -20,7 +21,7 @@ namespace NOGAste
         public string ElevToken      { get; set; }
         public string ImpersonateLvl { get; set; }
         public string LogonFail      { get; set; }
-        public string FailInfo       { get; set; }
+        public string KnownUser      { get; set; }
         public string FailReason     { get; set; }
         //public string   AfterHours     {  get; set; }
         //public string   LogonSuccess     {  get; set; }
@@ -35,10 +36,9 @@ namespace NOGAste
         public string Status         { get; set; }
         public string SubStatus      { get; set; }
         public string ReasonEvnt     { get; set; }
-        //public string   ThreatEval     {  get; set; }
-        //public string   ActionReqd     {  get; set; }
+        public string ThreatEval     { get; set; }
+        public string ActionReqd     { get; set; }
 
-        //public string ThreatLvl { get; set; }
 
     }
 }

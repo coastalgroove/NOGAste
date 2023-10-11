@@ -11,7 +11,7 @@ CREATE TABLE `events` (
   `ElevToken`      varchar(50) DEFAULT NULL,
   `ImpersonateLvl` varchar(50) DEFAULT NULL,
   `LogonFail`      varchar(50) DEFAULT NULL,
-  `FailInfo`       varchar(250) DEFAULT NULL,
+  `KnownUser`      varchar(250) DEFAULT NULL,
   `FailReason`     varchar(500) DEFAULT NULL,
   `AfterHours`     varchar(50) DEFAULT NULL,
   `LogonSuccess`   varchar(50) DEFAULT NULL,
@@ -29,11 +29,10 @@ CREATE TABLE `events` (
   `ThreatEval`     varchar(10) DEFAULT NULL,
   `ActionReqd`     varchar(250) DEFAULT NULL,
 
-  PRIMARY KEY (`KeyID`),
-  UNIQUE KEY `KeyID_UNIQUE` (`KeyID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`KeyID`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
-INSERT INTO securityLogs.events (EventID, TimeCreated, MachineName, UserID, LogLvl) VALUES (4624, '2023-08-01 14:01:30',  "LingHo","ChuckNorris","WARNING");
-INSERT INTO securityLogs.events (EventID, TimeCreated, MachineName, UserID, LogLvl) VALUES (4624, '2023-08-01 15:21:40',  "LingHo","user1",    "WARNING");
-INSERT INTO securityLogs.events (EventID, TimeCreated, MachineName, UserID, LogLvl) VALUES (4624, '2023-08-01 16:34:43',  "LingHo","user2",    "WARNING");
-INSERT INTO securityLogs.events (EventID, TimeCreated, MachineName, UserID, LogLvl) VALUES (4624, '2023-08-01 17:55:12',  "LingHo","JamesBond","WARNING");
+INSERT INTO securityLogs.events (EventID, TimeCreated, MachineName, UserID, LogLvl, KnownUser, ThreatEval, ActionReqd ) VALUES (4624, '2023-08-01 14:01:30',  "LingHo","ChuckNorris","WARNING", "KNOWN", "TBD", "TBD" );
+INSERT INTO securityLogs.events (EventID, TimeCreated, MachineName, UserID, LogLvl, KnownUser, ThreatEval, ActionReqd ) VALUES (4624, '2023-08-01 15:21:40',  "LingHo","user1",      "WARNING", "KNOWN", "TBD", "TBD" );
+INSERT INTO securityLogs.events (EventID, TimeCreated, MachineName, UserID, LogLvl, KnownUser, ThreatEval, ActionReqd ) VALUES (4624, '2023-08-01 16:34:43',  "LingHo","user2",      "WARNING", "KNOWN", "TBD", "TBD" );
+INSERT INTO securityLogs.events (EventID, TimeCreated, MachineName, UserID, LogLvl, KnownUser, ThreatEval, ActionReqd ) VALUES (4624, '2023-08-01 17:55:12',  "LingHo","JamesBond",  "WARNING", "KNOWN", "TBD", "TBD" );

@@ -128,7 +128,7 @@ namespace NOGAste
                         string ElevToken      = "";
                         string ImpersonateLvl = "";
                         string LogonFail      = "";
-                        string FailInfo       = "";     //not used
+                        string KnownUser      = "";     
                         string FailReason     = "";
                         string ProgramRun     = "";
                         string CommandRun     = "";
@@ -139,8 +139,8 @@ namespace NOGAste
                         string Status         = "";
                         string SubStatus      = "";
                         string ReasonEvnt     = "";
-
-
+                        string ThreatEval     = "";
+                        string ActionReqd     = "";
 
                         //****BEGIN SPLICE****
                         //I want to extact this to its own method but to do so requires that
@@ -159,7 +159,7 @@ namespace NOGAste
                             ElevToken,
                             ImpersonateLvl,
                             LogonFail,
-                            FailInfo,         //not used
+                            KnownUser,        
                             FailReason,
                             //public string   AfterHours,
                             //public string   LogonSuccess,
@@ -173,7 +173,9 @@ namespace NOGAste
                             LogLvl,
                             Status,
                             SubStatus,
-                            ReasonEvnt
+                            ReasonEvnt,
+                            ThreatEval,
+                            ActionReqd
                                      );
 
 
@@ -253,10 +255,10 @@ namespace NOGAste
                             //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
                             //Console.ReadLine();
                         }
-                        if (msgDict.ContainsKey("FailInfo"))
+                        if (msgDict.ContainsKey("KnownUser"))
                         {
                             //Console.WriteLine($"BEFORE: UserID:{msgDict["UserID"]} ");
-                            customEventFields.FailInfo = msgDict["FailInfo"];
+                            customEventFields.KnownUser = msgDict["KnownUser"];
                             //Console.WriteLine($"AFTER:  UserID:{msgDict["UserID"]} ");
                             //Console.ReadLine();
                         }
@@ -359,10 +361,10 @@ namespace NOGAste
                             ElevToken      = customEventFields.ElevToken,
                             ImpersonateLvl = customEventFields.ImpersonateLvl,
                             LogonFail      = customEventFields.LogonFail,
-                            FailInfo       = customEventFields.FailInfo,      //not used
+                            KnownUser      = customEventFields.KnownUser,      //not used
                             FailReason     = customEventFields.FailReason,
-                            //AfterHours     = customEventFields.AfterHours,
-                            //LogonSuccess   = customEventFields.LogonSuccess,
+                            //AfterHours   = customEventFields.AfterHours,
+                            //LogonSuccess = customEventFields.LogonSuccess,
                             MachineName    = customEventFields.MachineName,
                             UserID         = customEventFields.UserID,
                             ProgramRun     = customEventFields.ProgramRun,
@@ -373,9 +375,9 @@ namespace NOGAste
                             LogLvl         = customEventFields.LogLvl,
                             Status         = customEventFields.Status,
                             SubStatus      = customEventFields.SubStatus,
-                            ReasonEvnt     = customEventFields.ReasonEvnt
-                            //ThreatEval     = customEventFields.ThreatEval,
-                            //ActionReqd     = customEventFields.ActionReqd,
+                            ReasonEvnt     = customEventFields.ReasonEvnt,
+                            ThreatEval     = "TBD", //customEventFields.ThreatEval,
+                            ActionReqd     = "TBD", //customEventFields.ActionReqd,
                         };
                         //Adding the customEventFields into the array "customEventLogEntries"
                         //Console.WriteLine($"Writing Event: {csvField} to Array, Total Events: {ttlEvents}");
@@ -396,7 +398,7 @@ namespace NOGAste
                             Console.WriteLine($"ElevToken: {item.ElevToken}");
                             Console.WriteLine($"ImpersonationLvl: {item.ImpersonateLvl}");
                             Console.WriteLine($"LogonFail: {item.LogonFail}");
-                            Console.WriteLine($"FailInfo: {item.FailInfo}");        //not used
+                            Console.WriteLine($"KnownUser: {item.KnownUser}");        //not used
                             Console.WriteLine($"FailReason: {item.FailReason}");
                             Console.WriteLine($"MachineName: {item.MachineName}");
                             Console.WriteLine($"UserID: {item.UserID}");

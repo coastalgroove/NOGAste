@@ -29,7 +29,7 @@ namespace NOGAste
         public string ElevToken { get; set; }
         public string ImpersonateLvl { get; set; }
         public string LogonFail { get; set; }
-        public string FailInfo { get; set; }
+        public string KnownUser { get; set; }
         public string FailReason { get; set; }
         //public string   AfterHours     {  get; set; }
 
@@ -46,8 +46,8 @@ namespace NOGAste
         public string SubStatus { get; set; }
         public string ReasonEvnt { get; set; }
 
-        //public string   ThreatEval     {  get; set; }
-        //public string   ActionReqd     {  get; set; }
+        public string ThreatEval     {  get; set; }
+        public string ActionReqd     {  get; set; }
 
 
         //Constructor with parameters
@@ -59,8 +59,10 @@ namespace NOGAste
                string elevToken,
                string impersonateLvl,
                string logonFail,
-               string failInfo,
+               string knownUser,
                string failReason,
+               //string   afterHours,
+               //string   logonSuccess,
                string machineName,
                string userID,
                string programRun,
@@ -71,11 +73,9 @@ namespace NOGAste
                string logLvl,
                string status,
                string subStatus,
-               string reasonEvnt)
-        //string   afterHours,
-        //string   logonSuccess,
-        //string   threatEval,
-        //string   actionReqd)
+               string reasonEvnt,
+               string threatEval,
+               string actionReqd)
 
 
         { //Body of method EventLogCSVImport constructor, Initialize properites with the parameters
@@ -86,7 +86,7 @@ namespace NOGAste
             ElevToken      = elevToken;
             ImpersonateLvl = impersonateLvl;
             LogonFail      = logonFail;
-            FailInfo       = failInfo;
+            KnownUser      = knownUser;
             FailReason     = failReason;
             //AfterHours                      = afterHours ;   
             //LogonSuccess                    = logonSuccess ;   

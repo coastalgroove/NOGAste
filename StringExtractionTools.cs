@@ -2,6 +2,7 @@
 using Google.Protobuf.WellKnownTypes;
 using Markdig.Extensions.Figures;
 using Markdig.Helpers;
+using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections.Generic;
@@ -148,6 +149,11 @@ namespace NOGAste
 
                             Console.WriteLine($">>>Added UserID: {words[i + 2]}");
                             i += 2;
+
+                            if (words[i + 2] != "rootkit" && words[i + 2] != "hacker")
+                            {
+                                msgDict.Add("KnownUser", "KNOWN");
+                            }
                         }
                         catch
                         {
@@ -336,26 +342,6 @@ namespace NOGAste
 
 
 
-                    //FailInfo/11   Failure Information:     Appears always empty
-                    //else if (words[i] == "Failure" && words[i + 1] == "Information:" && words[i + 2] != "Failure")
-                    //{
-                    //    //Console.WriteLine($"Matched Failure Information:");
-                    //    //Console.ReadLine();
-                    //    string tmpStr5 = words[i + 2];
-
-                    //    if (msgDict.TryGetValue(("FailInfo"), out curVal))
-                    //    {
-                    //        msgDict["FailInfo"] = curVal + words[i + 2];
-                    //    }
-                    //    else
-                    //    {
-                    //        msgDict.Add("FailInfo", words[i + 2]);
-                    //    }
-
-                    //    Console.WriteLine($">>>Added FailInfo: {words[i + 2]}");
-                    //    //Console.ReadLine();
-                    //    i += 2;
-                    //}//FailInfo/11
 
 
 
