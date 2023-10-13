@@ -40,12 +40,14 @@ namespace NOGAste
         {
 
             Console.WriteLine("\n\n\n\n");
+            Console.WriteLine("NOGAste v0.0.1");
+            Console.WriteLine("Author Jay McGuerty (c) 2023");
             Console.WriteLine("1. Import from CSV");
             Console.WriteLine("2. Select from active Security Log");
             Console.WriteLine("3. Select from active Application Log");
             Console.WriteLine("4. Print out entire DB Events");
             Console.WriteLine("5. Search for use of malicious program use");
-            Console.WriteLine("6. GetEvent by KeyID 3");
+            
             Console.WriteLine("Select which event source to import ");
             string userInput = Console.ReadLine().Trim();
 
@@ -121,30 +123,7 @@ namespace NOGAste
 
 
 
-            //-----------------------------------------------
-            else if (userInput == "6")
-            {
-                var config = new ConfigurationBuilder()
-                  .SetBasePath(Directory.GetCurrentDirectory())
-                  .AddJsonFile("appsettings.json")
-                  .Build();
 
-                string connString = config.GetConnectionString("DefaultConnection");
-
-                IDbConnection conn = new MySqlConnection(connString);
-
-                //=================================================
-
-                var eventsRepo = new DapperEventsRepository(conn);
-                var events = eventsRepo.GetEvent();
-
-                foreach (Events field in events)
-                {
-                    Console.WriteLine($"KeyID:{field.KeyID}, EventID: {field.EventID}, Time: {field.TimeCreated} UserID: {field.UserID}, Machine: {field.MachineName}, ThreatEval:{field.ThreatEval}, ActionReqd:{field.ActionReqd}");
-                }
-    
-
-            }//Else if 6
 
             Console.WriteLine("Processing Complete");
             Console.WriteLine("\n\n\n\n");

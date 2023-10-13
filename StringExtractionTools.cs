@@ -130,7 +130,7 @@ namespace NOGAste
 
 
                     //Account Name/3
-                    else if (words[i] == "Account" && words[i + 1] == "Name:" && (words[i + 2] != "New" || words[i + 2] != "Account"))
+                    else if (words[i] == "Account" && words[i + 1] == "Name:" && (words[i + 2] != "New" || words[i + 2] != "Account" || words[i + 2] != "UserId")   )
                     {
                         //Console.WriteLine($"Matched Account Name:");
                         //Console.ReadLine();
@@ -139,7 +139,9 @@ namespace NOGAste
                         try
                         {
                             curVal = "";
-                            if (!msgDict.ContainsKey("UserID") && ( words[i + 2] != "S-1-5-18" || words[i + 2] != "S-1-5-21-110707328-881830710-1281915939-1001") )
+                            //words[i + 2] != "S-1-5-18"
+                            //words[i + 2] != "S-1-5-21-110707328-881830710-1281915939-1001"
+                            if (!msgDict.ContainsKey("UserID") &&  !words[i + 2].Contains("S-1-5"))
                             {
                                 msgDict.Add("UserID", words[i + 2]);
                                 //Console.WriteLine($"Field Name Valid:{words[i + 2]}");
@@ -185,7 +187,7 @@ namespace NOGAste
 
 
                     //Account Domain/4
-                    else if (words[i] == "Account" && words[i + 1] == "Domain:" && (words[i + 2].Contains("NT") || words[i + 2] == "WORKGROUP"))
+                    else if (words[i] == "Account" && words[i + 1] == "Domain:" && (words[i + 2].Contains("NT") || words[i + 2] == "WORKGROUP" || words[i + 2].Contains("WIN") || words[i + 2] == "ANONYMOUS"))
                     {
                         //Console.WriteLine($"Matched Account Domain:");
                         //Console.ReadLine();
@@ -268,7 +270,7 @@ namespace NOGAste
 
 
                     //ImpersonationLvl/9
-                    else if (words[i] == "Impersonation" && words[i + 1] == "Level:" && words[i + 2] == "Impersonation")
+                    else if (words[i] == "Impersonation" && words[i + 1] == "Level:" && ( words[i + 2] == "Delegate" || words[i + 2] == "Anonymous") )
                     {
                         //Console.WriteLine($"Matched Logon Type:");
                         //Console.ReadLine();

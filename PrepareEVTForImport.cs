@@ -41,15 +41,15 @@ namespace NOGAste
             //=================================================
 
 
-            //Open a runspace:
+            //Open a runspace to enable making a powershell call 
             Runspace runSpace = RunspaceFactory.CreateRunspace();
             runSpace.Open();
 
             //Create a pipeline:
             Pipeline pipeline = runSpace.CreatePipeline();
 
-            //Create a command:
-            Command cmd = new Command("Get-WinEvent");
+            //Create the actual Powershell command:
+            Command cmd = new Command("Get-WinEvent");  //Get-WinEvent is the powerhsell command
 
             //You can add parameters:
             cmd.Parameters.Add("LogName", logName);
@@ -109,13 +109,7 @@ namespace NOGAste
                            tmpUser = (property.Value).ToString();
                             Console.WriteLine($"UserID:{tmpUser}");
                             Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
-                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
-                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
-                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
-                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
-                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
-                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
-                            Console.WriteLine($"-----------------WE GOT A UserID HIT!!!--------****************--");
+
                             //Console.ReadLine();
                         }
                         if ((property.Name).Trim() == "MachineName")
