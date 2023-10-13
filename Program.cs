@@ -24,6 +24,7 @@ using System.Data;
 using Markdig.Extensions.Figures;
 using System.Drawing;
 using Microsoft.PowerShell.Commands;
+using System.ComponentModel.Design;
 
 namespace NOGAste
 {
@@ -35,10 +36,8 @@ namespace NOGAste
     {
 
 
-
-        public static void Main(string[] args)
+        public static string userMenu()
         {
-
             Console.WriteLine("\n\n\n\n");
             Console.WriteLine("NOGAste v0.0.1");
             Console.WriteLine("Author Jay McGuerty (c) 2023");
@@ -47,28 +46,37 @@ namespace NOGAste
             Console.WriteLine("3. Select from active Application Log");
             Console.WriteLine("4. Print out entire DB Events");
             Console.WriteLine("5. Search for use of malicious program use");
-            
+            Console.WriteLine("7. Exit");
+
             Console.WriteLine("Select which event source to import ");
             string userInput = Console.ReadLine().Trim();
+
+            return userInput;
+        }
+
+
+        public static void Main(string[] args)
+        {
+            string userInput = "";
+
+            while (userInput != "7")
+            { 
+            userInput = userMenu();
 
             if (userInput == "1")
             {
                 PrepareCSVForImport.ReadCSVFile();
-
             }
             else if (userInput == "2")
             {
                 Console.WriteLine("Must be running as ADMINISTRATOR");
                 Console.ReadLine();
                 PrepareEVTForImport.InsertEVT("security");
-
-
             }
 
             else if (userInput == "3")
             {
                 PrepareEVTForImport.InsertEVT("application");
-
             }
 
             else if (userInput == "4")
@@ -122,16 +130,12 @@ namespace NOGAste
             }
 
 
-
-
-
             Console.WriteLine("Processing Complete");
             Console.WriteLine("\n\n\n\n");
+        }//while
 
 
         }//Main
-
-
 
     }//class Program
 }//namespace
