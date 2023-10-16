@@ -44,7 +44,10 @@ namespace NOGAste
 
 
             //Defines a boundary for the object outside of which
-            //the object is automatically destroyed.  The using statement
+            //the object is automatically destroyed - to ENSURE
+            //the object is disposed of properly
+
+            //The using statement
             //is exited when exiting the using block
             //The "using" statement allows you to specify multiple resources in a
             //single statement. The object could also be created outside the "using"
@@ -90,7 +93,7 @@ namespace NOGAste
                     {   //These are variables that correlate to columns(named
                         //headers) in the .CSV file 
                         string Message              = stdEventFields[0];
-                        string EventID              = stdEventFields[1];  //Used in final eventInstance
+                        string EventID              = stdEventFields[1];  //Used in final CSV eventInstance
                         string Version              = stdEventFields[2];
                         string Qualifiers           = stdEventFields[3];
                         string Level                = stdEventFields[4];
@@ -106,7 +109,7 @@ namespace NOGAste
                         string ThreadID             = stdEventFields[13];
                         string MachineName          = stdEventFields[14];
                         string UserID               = stdEventFields[15];
-                        string TimeCreated          = stdEventFields[16];  //Used in final eventInstance
+                        string TimeCreated          = stdEventFields[16];  //Used in final CSV eventInstance
                         string ActivityID           = stdEventFields[17];
                         string RelatedActivity      = stdEventFields[18];
                         string ContainerLog         = stdEventFields[19];
@@ -208,7 +211,14 @@ namespace NOGAste
                         Dictionary<string, string> msgDict = new Dictionary<string, string>();
                         msgDict = StringExtractionTools.convertMsgToFields(Message);
 
-                        //NOW, access the extra stdEventFields from "msgDict" and UPDATE "customEventFields"
+                        //uncomment to see the "Message"
+                        //Console.WriteLine($"Message:{Message}");
+                        //Console.ReadLine();
+
+                        //All of the CSV/EVT "Message" fields have been loaded into the msgDict
+                        //Now we process each one and extract the information we need that
+                        //is NOT available in the "formal" object.fields, we synthesize
+                        //extra stdEventFields from "msgDict" and UPDATE "customEventFields"
                         //before its added to "customEventLogEntries"
                         for (int i = 0; i < msgDict.Count; i++)
                         {

@@ -45,13 +45,13 @@ namespace NOGAste
             Runspace runSpace = RunspaceFactory.CreateRunspace();
             runSpace.Open();
 
-            //Create a pipeline:
+            //Create class "pipeline" used to invoke powershell command
             Pipeline pipeline = runSpace.CreatePipeline();
 
             //Create the actual Powershell command:
             Command cmd = new Command("Get-WinEvent");  //Get-WinEvent is the powerhsell command
 
-            //You can add parameters:
+            //Add parameters:
             cmd.Parameters.Add("LogName", logName);
             //cmd.Parameters.Add("StartTime", "08:00");
             //cmd.Parameters.Add("EndTime", "09:00");
@@ -59,7 +59,12 @@ namespace NOGAste
             //Add it to the pipeline:
             pipeline.Commands.Add(cmd);
 
+            //Execute the commands in the pipeline, in this
+            //case taking events from eventviewer and creating
+            //a collection of powershell objects "PSObjects"
+            //providing access to available "members"
             Collection<PSObject> output = pipeline.Invoke();
+
             //foreach (PSObject psObject in output)
             Console.WriteLine($"Press return to retrieve all active logs in Application Log and insert into DB");
             Console.ReadLine();
