@@ -8,7 +8,7 @@ namespace NOGAste
 {
     public class Events  
     {
-
+        //Defines a custom Events object
         //Class "Events" is used by IEventsRepository
 
         //Properties

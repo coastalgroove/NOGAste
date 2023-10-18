@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace NOGAste
 {
- 
+    // you-are-here
+    //IEventsRepository> DapperEventsRepository
     
     //An interface is an abstract class which contains only
     //abstract members (stubbed out methods)

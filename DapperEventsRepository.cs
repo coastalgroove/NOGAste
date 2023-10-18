@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 
 namespace NOGAste
 {
+    //                       you-are-here
+    //IEventsRepository> DapperEventsRepository
+    //DapperEventsRepository implements stubbed out methods in
+    //in IEventsRepository as well as defining additional method
+    //functionality
+
     public class DapperEventsRepository : IEventsRepository
     {
         private readonly IDbConnection _conn;
