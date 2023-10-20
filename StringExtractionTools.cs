@@ -109,7 +109,6 @@ namespace NOGAste
                     {
                         //Console.WriteLine($"Matched Security ID:");
                         //Console.ReadLine();
-                        msgFieldList.Add(words[i] + " " + words[i + 1] + " " + words[i + 2]);
                         string secIDUpd = words[i + 2] + " " + words[i + 3];
 
                         if (msgDict.TryGetValue(("SecurityID"), out curVal))
@@ -229,7 +228,6 @@ namespace NOGAste
                         part1 = words[i].Substring(0, index1 - 1); //MachineName
                         part2 = words[i].Substring(index1 + 1, words[i].Length - 1); //blahblahblah  .Length - index1
 
-                        msgFieldList.Add(part1 + " " + part2);
                         msgDict.Add("MachineName", part2);
                         Console.WriteLine($">>>Added MachineName: {part1 + " " + part2}");
                     }//MachineName:/5
@@ -270,12 +268,12 @@ namespace NOGAste
 
 
                     //ImpersonationLvl/9
-                    else if (words[i] == "Impersonation" && words[i + 1] == "Level:" && ( words[i + 2] == "Delegate" || words[i + 2] == "Anonymous") )
+                    else if (words[i] == "Impersonation" && words[i + 1] == "Level:" &&  ( words[i + 2] == "Delegate" || words[i + 2] == "Anonymous" || words[i + 2] == "Identify" || words[i + 2] == "Impersonate") )
                     {
                         //Console.WriteLine($"Matched Logon Type:");
                         //Console.ReadLine();
-                        msgDict.Add("ImpersonationLvl: ", words[i + 2]);
-                        Console.WriteLine($">>>Added ImpersonationLvl: {words[i + 2]}");
+                        msgDict.Add("ImpersonateLvl", words[i + 2]);
+                        Console.WriteLine($">>>Added ImpersonateLvl: {words[i + 2]}");
                         //Console.ReadLine();
                         i += 2;
                     }//ImpersonationLvl:/9

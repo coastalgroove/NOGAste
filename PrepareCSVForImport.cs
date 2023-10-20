@@ -406,7 +406,7 @@ namespace NOGAste
                             Console.WriteLine($"EventMsg: {item.EventMsg}");
                             Console.WriteLine($"LogonType: {item.LogonType}");
                             Console.WriteLine($"ElevToken: {item.ElevToken}");
-                            Console.WriteLine($"ImpersonationLvl: {item.ImpersonateLvl}");
+                            Console.WriteLine($"ImpersonateLvl: {item.ImpersonateLvl}");
                             Console.WriteLine($"LogonFail: {item.LogonFail}");
                             Console.WriteLine($"KnownUser: {item.KnownUser}");        //not used
                             Console.WriteLine($"FailReason: {item.FailReason}");
